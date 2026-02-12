@@ -1,0 +1,44 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-12T13:37:56.387Z",
+  "summary": "Implemented a new public /bookings route and added a navigation link to it. Added new public booking React Query hooks and a PublicBookingsPage. Backend changes are present but the diff excerpt does not show the required new public query methods. The logo asset update is not evidenced in the diff summary.",
+  "missing_requirements": [
+    {
+      "id": "REQ-17",
+      "requirement": "Replace the currently used Rconnect logo asset with the newly uploaded image while keeping the existing frontend logo path stable at `/assets/generated/rconnect-logo.dim_512x512.png`.",
+      "reason": "The diff shows the logo path being used in Header, but there is no evidence that the static asset file `/assets/generated/rconnect-logo.dim_512x512.png` was updated/replaced in this change set.",
+      "evidence": [
+        "frontend/src/components/layout/Header.tsx"
+      ]
+    },
+    {
+      "id": "REQ-18",
+      "requirement": "If the backend previously restricted access to all-bookings data, add a new backend query method that allows fetching all bookings for the public page (and the frontend uses that method).",
+      "reason": "Frontend calls `actor.getAllBookingsPublic()` and `actor.getBookingPublic()`, but the provided `backend/main.mo` diff excerpt does not show definitions for these public methods (content is truncated). Therefore their implementation cannot be verified from the diff summary.",
+      "evidence": [
+        "frontend/src/hooks/useBookings.ts",
+        "backend/main.mo"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Backend `createBooking` explicitly opened to guests (unauthenticated callers) with a comment indicating guest access.",
+      "reason": "The BuildRequest did not ask to change booking creation authorization behavior; it focused on a logo asset swap and adding a public read-only bookings page.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    }
+  ],
+  "confidence": 0.62,
+  "changed_files": [
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/src/App.tsx",
+    "frontend/src/components/layout/Header.tsx",
+    "frontend/src/hooks/useBookings.ts",
+    "frontend/src/pages/PublicBookingsPage.tsx",
+    "project_state.json"
+  ]
+}

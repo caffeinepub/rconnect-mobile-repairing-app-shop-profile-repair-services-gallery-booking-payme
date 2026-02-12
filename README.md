@@ -1,2 +1,3 @@
-# rconnect-mobile-repairing-app-shop-profile-repair-services-gallery-booking-payme
-Exported from Caffeine project: Rconnect Mobile Repairing App: Shop Profile, Repair Services Gallery, Booking &amp; Payments
+## 
+
+To run app build and run docker image: `docker build -t app . docker run -it --network host app`

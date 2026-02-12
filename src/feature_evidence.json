@@ -1,0 +1,62 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-replace-the-currently-used-rconnect-logo-asset-with-the-newly-uploaded-image-download-1-webp-while-keeping-the-existing-frontend-logo-path-stable-at-assets-generated-rconnect-logo-dim-512x512-png-so-the-header-and-shoppage-hero-continue-to-render-the-updated-logo-without-code-changes-beyond-the-static-asset-update",
+      "featureTitle": "Replace the currently used Rconnect logo asset with the newly uploaded image (download-1.webp) while keeping the existing frontend logo path stable at `/assets/generated/rconnect-logo.dim_512x512.png`, so the Header and ShopPage hero continue to render the updated logo without code changes beyond the static asset update.",
+      "files": [],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-17"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-new-public-non-admin-page-that-shows-a-read-only-list-of-all-submitted-bookings-visible-to-everyone-no-login-required-including-a-details-view-per-booking-this-page-must-not-allow-updating-booking-status",
+      "featureTitle": "Add a new public (non-admin) page that shows a read-only list of all submitted bookings visible to everyone (no login required), including a details view per booking. This page must not allow updating booking status.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/hooks/useBookings.ts",
+        "frontend/src/pages/PublicBookingsPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-18"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-expose-the-new-public-all-bookings-page-in-the-main-navigation-so-users-can-easily-find-it-on-both-desktop-navigation-and-the-mobile-menu",
+      "featureTitle": "Expose the new public All Bookings page in the main navigation so users can easily find it on both desktop navigation and the mobile menu.",
+      "files": [
+        "frontend/src/components/layout/Header.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-19"
+      ],
+      "confidence": "high"
+    }
+  ]
+}
