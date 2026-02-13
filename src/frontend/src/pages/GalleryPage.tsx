@@ -34,6 +34,7 @@ export default function GalleryPage() {
                     src={item.image}
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    loading="lazy"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-6xl">
@@ -57,7 +58,7 @@ export default function GalleryPage() {
 
       {/* Detail Dialog */}
       <Dialog open={!!selectedItem} onOpenChange={() => setSelectedItem(null)}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           {selectedItem && (
             <>
               <DialogHeader>
@@ -85,14 +86,19 @@ export default function GalleryPage() {
                 <DialogDescription className="text-base leading-relaxed">
                   {selectedItem.fullDescription || selectedItem.description}
                 </DialogDescription>
-                {selectedItem.details && (
-                  <div className="space-y-2 pt-4 border-t">
-                    {selectedItem.details.map((detail, index) => (
-                      <div key={index} className="flex items-start gap-2">
-                        <span className="text-amber-600 mt-1">•</span>
-                        <span className="text-sm text-muted-foreground">{detail}</span>
-                      </div>
-                    ))}
+                {selectedItem.details && selectedItem.details.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
+                      Service Details
+                    </h4>
+                    <ul className="space-y-2">
+                      {selectedItem.details.map((detail, index) => (
+                        <li key={index} className="flex items-start gap-2">
+                          <span className="text-amber-600 dark:text-amber-400 mt-1">•</span>
+                          <span className="text-sm">{detail}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 )}
               </div>

@@ -1,13 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Update the app’s Rconnect logo asset to the newly provided design and add a new public, read-only “All Bookings” page that anyone can access without login.
+**Goal:** Ensure the device model is consistently labeled as “Model Name” across all booking-related screens and dialogs, while continuing to use the existing `deviceModel` value.
 
 **Planned changes:**
-- Replace the existing logo file at `/assets/generated/rconnect-logo.dim_512x512.png` with the newly uploaded logo artwork so existing header and Shop page hero logo rendering continues without frontend path changes.
-- Add a new public route (e.g., `/bookings`) that lists all submitted bookings and provides a read-only booking details view.
-- Add a backend method to fetch all bookings for the public page if current all-bookings access is restricted.
-- Add a new “All Bookings” navigation item to both the desktop header navigation and the mobile menu.
-- Keep the existing admin-only bookings management page at `/admin/bookings` unchanged and still able to update booking status.
+- Update the Booking page form label from “Device Model” to “Model Name”, including any related helper and validation text, without changing the saved field (`deviceModel`).
+- Update the Public Bookings booking details dialog device label from “Device Model” to “Model Name”, continuing to display `booking.deviceModel`.
+- Update the Admin Bookings booking details dialog device label from “Device Model” to “Model Name”, continuing to display `selectedBooking.deviceModel`.
 
-**User-visible outcome:** Users can see the updated Rconnect logo across the site, and anyone can open a new “All Bookings” page from the main navigation to browse all bookings and view booking details without being able to modify anything.
+**User-visible outcome:** Users and admins see the device model shown under the label “Model Name” consistently in the booking form and in both public and admin booking details dialogs, with existing bookings displaying correctly.

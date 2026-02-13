@@ -17,6 +17,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     title: 'iPhone Screen Replacement',
     description: 'Complete screen replacement with original quality display',
     fullDescription: 'Professional iPhone screen replacement service using high-quality OLED display. The repair includes complete testing of touch sensitivity, display colors, and brightness levels to ensure perfect functionality.',
+    image: '/assets/generated/iphone-repair.dim_1200x800.jpg',
     icon: <Smartphone className="w-16 h-16 text-amber-600" />,
     badge: 'Popular',
     details: [
@@ -31,6 +32,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     title: 'Battery Replacement Service',
     description: 'High-capacity battery replacement for extended life',
     fullDescription: 'Replace your old battery with a genuine high-capacity battery. Our service includes battery health diagnostics, proper installation, and calibration for optimal performance.',
+    image: '/assets/generated/battery-replacement.dim_1200x800.jpg',
     icon: <Battery className="w-16 h-16 text-orange-600" />,
     badge: 'Fast Service',
     details: [
@@ -45,6 +47,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     title: 'Water Damage Recovery',
     description: 'Expert water damage repair and component cleaning',
     fullDescription: 'Comprehensive water damage repair service including complete disassembly, professional cleaning of all components, corrosion treatment, and thorough testing before reassembly.',
+    image: '/assets/generated/water-damage-repair.dim_1200x800.jpg',
     icon: <Droplet className="w-16 h-16 text-blue-600" />,
     details: [
       'Complete disassembly and cleaning',
@@ -58,6 +61,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     title: 'Charging Port Repair',
     description: 'Fix loose or damaged charging ports',
     fullDescription: 'Professional charging port repair or replacement service. We fix loose connections, damaged pins, and ensure proper charging functionality with thorough testing.',
+    image: '/assets/generated/charging-port-repair.dim_1200x800.jpg',
     icon: <Zap className="w-16 h-16 text-amber-600" />,
     badge: 'Quick Fix',
     details: [
@@ -68,16 +72,17 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     ],
   },
   {
-    id: 'back-panel-1',
-    title: 'Back Panel Replacement',
-    description: 'Replace cracked or damaged back glass',
-    fullDescription: 'Replace your damaged back panel with a high-quality replacement. Service includes careful removal of old panel, cleaning, and precise installation of new panel.',
+    id: 'android-repair-1',
+    title: 'Android Device Repair',
+    description: 'Expert repairs for all Android smartphones',
+    fullDescription: 'Comprehensive repair services for all Android devices including screen replacement, battery service, and component repairs with quality parts and expert technicians.',
+    image: '/assets/generated/android-repair.dim_1200x800.jpg',
     icon: <Shield className="w-16 h-16 text-orange-600" />,
     details: [
+      'All Android brands supported',
       'Quality replacement parts',
       'Precise installation',
-      'Color matched',
-      'Protective coating applied',
+      'Thorough testing',
     ],
   },
   {
@@ -98,6 +103,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     title: 'Samsung Display Repair',
     description: 'AMOLED screen replacement for Samsung devices',
     fullDescription: 'Premium AMOLED display replacement for Samsung devices with original quality parts and professional installation.',
+    image: '/assets/generated/samsung-display-repair.dim_1200x800.jpg',
     icon: <Smartphone className="w-16 h-16 text-orange-600" />,
     details: [
       'AMOLED display technology',

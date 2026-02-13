@@ -96,12 +96,10 @@ export default function PublicBookingsPage() {
                 onClick={() => setSelectedBookingId(booking.id)}
               >
                 <CardHeader>
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-start justify-between gap-2">
                     <div className="flex-1">
-                      <CardTitle className="text-lg mb-1">
-                        {booking.customerName}
-                      </CardTitle>
-                      <CardDescription className="text-sm">
+                      <CardTitle className="text-lg">{booking.customerName}</CardTitle>
+                      <CardDescription className="mt-1">
                         Booking #{booking.id.toString()}
                       </CardDescription>
                     </div>
@@ -111,19 +109,19 @@ export default function PublicBookingsPage() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Smartphone className="w-4 h-4 text-muted-foreground" />
-                    <span className="font-medium">{booking.deviceModel}</span>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Smartphone className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">{booking.deviceModel}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="w-4 h-4" />
-                    <span>{formatDateTime(booking.preferredDateTime)}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Phone className="w-4 h-4" />
+                    <Phone className="w-4 h-4 flex-shrink-0" />
                     <span>{booking.phoneNumber}</span>
                   </div>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Calendar className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">{formatDateTime(booking.preferredDateTime)}</span>
+                  </div>
+                  <p className="text-sm line-clamp-2 text-muted-foreground">
                     {booking.issueDescription}
                   </p>
                 </CardContent>
@@ -136,6 +134,8 @@ export default function PublicBookingsPage() {
         <BookingDetailDialog
           bookingId={selectedBookingId}
           onClose={() => setSelectedBookingId(null)}
+          getStatusColor={getStatusColor}
+          getStatusLabel={getStatusLabel}
         />
       </div>
     </div>
@@ -145,123 +145,102 @@ export default function PublicBookingsPage() {
 function BookingDetailDialog({
   bookingId,
   onClose,
+  getStatusColor,
+  getStatusLabel,
 }: {
   bookingId: bigint | null;
   onClose: () => void;
+  getStatusColor: (status: string) => string;
+  getStatusLabel: (status: string) => string;
 }) {
   const { data: booking, isLoading } = useGetBookingPublic(bookingId);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20';
-      case 'confirmed':
-        return 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20';
-      case 'completed':
-        return 'bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20';
-      case 'cancelled':
-        return 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20';
-      default:
-        return 'bg-gray-500/10 text-gray-700 dark:text-gray-400 border-gray-500/20';
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    return status.charAt(0).toUpperCase() + status.slice(1);
-  };
-
   return (
-    <Dialog open={bookingId !== null} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={!!bookingId} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Booking Details</DialogTitle>
-          <DialogDescription>
-            Complete information about this booking
-          </DialogDescription>
-        </DialogHeader>
-
         {isLoading && (
-          <div className="space-y-4">
-            <Skeleton className="h-6 w-full" />
-            <Skeleton className="h-4 w-3/4" />
-            <Skeleton className="h-4 w-5/6" />
-            <Skeleton className="h-20 w-full" />
+          <div className="space-y-4 py-8">
+            <Skeleton className="h-8 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+            <Skeleton className="h-32 w-full" />
           </div>
         )}
 
         {!isLoading && booking && (
-          <div className="space-y-6">
-            {/* Status Badge */}
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">
-                Booking #{booking.id.toString()}
-              </span>
-              <Badge className={getStatusColor(booking.status)}>
-                {getStatusLabel(booking.status)}
-              </Badge>
-            </div>
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-2xl">Booking Details</DialogTitle>
+              <DialogDescription>Booking #{booking.id.toString()}</DialogDescription>
+            </DialogHeader>
 
-            {/* Customer Information */}
-            <div className="space-y-3">
-              <h3 className="font-semibold text-lg">Customer Information</h3>
-              <div className="grid gap-3">
-                <div>
-                  <span className="text-sm text-muted-foreground">Name</span>
-                  <p className="font-medium">{booking.customerName}</p>
-                </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">Phone Number</span>
-                  <p className="font-medium">{booking.phoneNumber}</p>
+            <div className="space-y-6">
+              {/* Status */}
+              <div className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
+                <span className="font-medium">Status</span>
+                <Badge className={getStatusColor(booking.status)}>
+                  {getStatusLabel(booking.status)}
+                </Badge>
+              </div>
+
+              {/* Customer Info */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-lg">Customer Information</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground">Name</p>
+                    <p className="font-medium">{booking.customerName}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground">Phone</p>
+                    <p className="font-medium">{booking.phoneNumber}</p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Device Information */}
-            <div className="space-y-3">
-              <h3 className="font-semibold text-lg">Device Information</h3>
-              <div className="grid gap-3">
-                <div>
-                  <span className="text-sm text-muted-foreground">Device Model</span>
+              {/* Device Info */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-lg">Device Information</h3>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Model Name</p>
                   <p className="font-medium">{booking.deviceModel}</p>
                 </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">Issue Description</span>
-                  <p className="font-medium">{booking.issueDescription}</p>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Issue Description</p>
+                  <p className="text-sm leading-relaxed">{booking.issueDescription}</p>
                 </div>
                 {booking.photoNotes && (
-                  <div>
-                    <span className="text-sm text-muted-foreground">Additional Notes</span>
-                    <p className="font-medium">{booking.photoNotes}</p>
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground">Additional Notes</p>
+                    <p className="text-sm leading-relaxed">{booking.photoNotes}</p>
                   </div>
                 )}
               </div>
-            </div>
 
-            {/* Booking Details */}
-            <div className="space-y-3">
-              <h3 className="font-semibold text-lg">Booking Details</h3>
-              <div className="grid gap-3">
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-muted-foreground" />
-                  <div>
-                    <span className="text-sm text-muted-foreground">Preferred Date & Time</span>
+              {/* Appointment Info */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-lg">Appointment Details</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground">Preferred Date & Time</p>
                     <p className="font-medium">{formatDateTime(booking.preferredDateTime)}</p>
                   </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-muted-foreground" />
-                  <div>
-                    <span className="text-sm text-muted-foreground">Booking Created</span>
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground">Booking Created</p>
                     <p className="font-medium">{formatDateTime(booking.timestamp)}</p>
                   </div>
                 </div>
-                <div>
-                  <span className="text-sm text-muted-foreground">Payment Method</span>
-                  <p className="font-medium">{booking.paymentMethod}</p>
+              </div>
+
+              {/* Payment Info */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-lg">Payment Information</h3>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Payment Method</p>
+                  <p className="font-medium capitalize">{booking.paymentMethod}</p>
                 </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </DialogContent>
     </Dialog>

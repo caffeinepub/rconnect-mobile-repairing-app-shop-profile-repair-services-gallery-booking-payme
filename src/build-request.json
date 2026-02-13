@@ -1,76 +1,40 @@
 {
   "kind": "build_request",
-  "title": "Replace Rconnect logo with newly uploaded image and add public All Bookings page",
+  "title": "Show 'Model Name' in all booking modals and booking UI",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-17",
-      "text": "Replace the currently used Rconnect logo asset with the newly uploaded image (download-1.webp) while keeping the existing frontend logo path stable at `/assets/generated/rconnect-logo.dim_512x512.png`, so the Header and ShopPage hero continue to render the updated logo without code changes beyond the static asset update.",
+      "id": "REQ-25",
+      "text": "Update the booking UI so that the device model is consistently presented as “Model Name” in all booking-related screens and dialogs (customer booking form, public bookings details dialog, and admin bookings details dialog), ensuring the existing `deviceModel` value is what is displayed.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-4"
         ],
         "quotes": [
-          "YE HI LOGO CHIYE"
+          "BOOKING MAI MODAL NAME ADD KARO SAB"
         ]
       },
       "acceptanceCriteria": [
-        "The file `/assets/generated/rconnect-logo.dim_512x512.png` is updated to match the newly uploaded logo (download-1.webp).",
-        "The updated logo renders correctly in the app header (desktop + mobile sheet) and on the Shop page hero section without layout breakage across common viewport sizes."
-      ]
-    },
-    {
-      "id": "REQ-18",
-      "text": "Add a new public (non-admin) page that shows a read-only list of all submitted bookings visible to everyone (no login required), including a details view per booking. This page must not allow updating booking status.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "OUR EK add karo jismein all booking dikhe SAB KO"
-        ]
-      },
-      "acceptanceCriteria": [
-        "A new route/page exists (e.g., `/bookings` or equivalent) that is accessible without Internet Identity login and displays all bookings.",
-        "The page supports viewing booking details (dialog or dedicated detail view) and is strictly read-only (no status update controls).",
-        "If the backend previously restricted access to all-bookings data, a new backend query method exists that allows fetching all bookings for this public page, and the frontend page uses that method."
-      ]
-    },
-    {
-      "id": "REQ-19",
-      "text": "Expose the new public All Bookings page in the main navigation so users can easily find it on both desktop navigation and the mobile menu.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-3"
-        ],
-        "quotes": [
-          "...all booking dikhe SAB KO"
-        ]
-      },
-      "acceptanceCriteria": [
-        "A new navigation item (English label) is present in the Header desktop nav and mobile menu that navigates to the public All Bookings page.",
-        "Navigation styling remains consistent with the current theme and active-route behavior."
+        "On the Booking page form (`frontend/src/pages/BookingPage.tsx`), the field label “Device Model” is changed to “Model Name” (and any related helper/validation text uses “Model Name”), while still saving into the existing `deviceModel` field.",
+        "In the Public Bookings booking details dialog (`frontend/src/pages/PublicBookingsPage.tsx`), the device section label “Device Model” is changed to “Model Name” and the displayed value remains `booking.deviceModel`.",
+        "In the Admin Bookings booking details dialog (`frontend/src/pages/AdminBookingsPage.tsx`), the device section label “Device Model” is changed to “Model Name” and the displayed value remains `selectedBooking.deviceModel`.",
+        "No backend schema/types are changed; existing bookings continue to load and display the model name correctly from `deviceModel`."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor; add/modify methods within `backend/main.mo` only.",
-    "Do not edit files under `frontend/src/components/ui` or any other paths listed as immutable in SYSTEM_CONTEXT.",
-    "Do not remove or break the existing admin-only bookings management page at `/admin/bookings` (it must remain admin-protected and retain status update capability)."
+    "Use English for any user-facing text.",
+    "Do not modify any files under `frontend/src/components/ui` or other paths listed as immutable in SYSTEM_CONTEXT.",
+    "Keep backend as a single Motoko actor in `backend/main.mo`; only introduce a migration if strictly required (not expected for this change)."
   ],
   "nonGoals": [
-    "Do not implement real-time updates (no websockets/push).",
-    "Do not add third-party authentication providers; Internet Identity remains the only auth option.",
-    "Do not add online payment gateway integrations."
+    "Adding a new backend field separate from `deviceModel` (e.g., a second 'modelName' property).",
+    "Changing booking status logic, permissions, or booking list functionality."
   ],
   "imageRequirements": {
     "required": [],
-    "edits": [
-      "Replace the logo artwork with the newly uploaded design (rconnect-logo.dim_512x512.png > rconnect-logo.dim_512x512.png)"
-    ]
+    "edits": []
   },
   "userProfileUpdate": {
     "goalsToAdd": [],

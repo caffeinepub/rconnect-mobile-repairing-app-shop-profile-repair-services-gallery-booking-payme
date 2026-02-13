@@ -45,7 +45,7 @@ export default function BookingPage() {
     }
 
     if (!formData.deviceModel.trim()) {
-      newErrors.deviceModel = 'Device model is required';
+      newErrors.deviceModel = 'Model name is required';
     }
 
     if (!formData.issueDescription.trim()) {
@@ -223,10 +223,10 @@ export default function BookingPage() {
                   )}
                 </div>
 
-                {/* Device Model */}
+                {/* Model Name */}
                 <div className="space-y-2">
                   <Label htmlFor="deviceModel">
-                    Device Model <span className="text-destructive">*</span>
+                    Model Name <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="deviceModel"

@@ -1,11 +1,12 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 11,
+  "projectStateVersion": 17,
   "summary": "Mobile repairing service app for Rconnect with customer booking, online payments, distinct service/repairing sections, gallery-style UI, and a high-level shop presentation/profile including shop photo, contact numbers, and address.",
   "architectural_notes": [],
-  "known_issues": [],
+  "known_issues": [
+    "Logo is not visible for users (\"Logo dikh nahin raha hai\")"
+  ],
   "isFixRequest": false,
-  "imageRequirements": "## Edit Images\n- Replace the logo artwork with the newly uploaded design (rconnect-logo.dim_512x512.png > rconnect-logo.dim_512x512.png)",
   "existing_features": [
     {
       "id": "feature-create-a-customer-facing-mobile-repair-app-for-rconnect-with-a-clear-navigation-structure-that-includes-shop-home-profile-services-repairs-categorized-gallery-gallery-style-browsing-booking-payments-and-contact-address",
@@ -150,6 +151,46 @@
         "REQ-19"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-fix-the-logo-visibility-issue-so-the-rconnect-logo-reliably-renders-for-all-users-in-both-the-header-desktop-mobile-sheet-and-the-shoppage-hero-area-add-an-explicit-image-load-fallback-e-g-show-shop-name-text-or-a-simple-mark-when-assets-generated-rconnect-logo-dim-512x512-png-fails-to-load-and-ensure-the-logo-remains-readable-across-light-dark-themes-and-common-viewport-sizes",
+      "title": "Fix the logo visibility issue so the Rconnect logo reliably renders for all users in both the Header (desktop + mobile sheet) and the ShopPage hero area. Add an explicit image-load fallback (e.g., show shop name text or a simple mark) when `/assets/generated/rconnect-logo.dim_512x512.png` fails to load, and ensure the logo remains readable across light/dark themes and common viewport sizes.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-people-human-imagery-from-the-visible-website-content-by-replacing-any-hero-banner-gallery-images-that-contain-people-with-device-repair-focused-imagery-only-phones-repair-tools-parts-close-ups-of-devices",
+      "title": "Remove people/human imagery from the visible website content by replacing any hero/banner/gallery images that contain people with device/repair-focused imagery only (phones, repair tools, parts, close-ups of devices).",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-refreshed-set-of-gallery-visuals-showing-mobile-repairing-for-major-device-families-android-through-iphone-update-frontend-src-data-galleryitems-tsx-so-multiple-gallery-items-render-real-images-via-the-image-field-using-new-static-assets-placed-under-frontend-public-assets-generated-while-keeping-the-existing-gallery-card-dialog-behavior-intact",
+      "title": "Add a refreshed set of gallery visuals showing mobile repairing for major device families (Android through iPhone). Update `frontend/src/data/galleryItems.tsx` so multiple gallery items render real images (via the `image` field) using new static assets placed under `frontend/public/assets/generated/`, while keeping the existing gallery card + dialog behavior intact.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-simple-new-update-visual-enhancement-to-improve-the-overall-look-and-clarity-add-a-brands-we-repair-section-on-the-shop-page-featuring-android-and-iphone-plus-a-few-popular-android-brands-using-clean-brand-style-icon-tiles-and-consistent-spacing-typography-with-the-current-amber-orange-theme",
+      "title": "Add a simple 'New update' visual enhancement to improve the overall look and clarity: add a 'Brands We Repair' section on the Shop page featuring Android and iPhone plus a few popular Android brands, using clean brand-style icon tiles and consistent spacing/typography with the current amber/orange theme.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-booking-ui-so-that-the-device-model-is-consistently-presented-as-model-name-in-all-booking-related-screens-and-dialogs-customer-booking-form-public-bookings-details-dialog-and-admin-bookings-details-dialog-ensuring-the-existing-devicemodel-value-is-what-is-displayed",
+      "title": "Update the booking UI so that the device model is consistently presented as “Model Name” in all booking-related screens and dialogs (customer booking form, public bookings details dialog, and admin bookings details dialog), ensuring the existing `deviceModel` value is what is displayed.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -230,6 +271,38 @@
     {
       "id": "AR-13",
       "summary": "Add a screen/view where all submitted bookings are listed and visible (shop/admin-side \"all bookings\" list)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Replace the currently used Rconnect logo static asset with the newly uploaded image (download-2.webp) while keeping the existing frontend logo path stable at `/assets/generated/rconnect-logo.dim_512x512.png`, so the Header and ShopPage hero continue to render the updated logo without any code changes.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Remove people/human images from the site UI/content (\"logon ko hatao\")",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Add mobile repairing photos covering Android to iPhone devices (update gallery/visual content)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "General UI/website improvement update to make the site look better (new enhancements requested)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Add 'Model Name' field in the Booking modal/form (ensure it is captured for all bookings)",
       "reqIds": [],
       "status": "pending"
     }

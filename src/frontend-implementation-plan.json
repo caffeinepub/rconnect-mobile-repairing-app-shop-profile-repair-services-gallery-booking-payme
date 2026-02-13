@@ -1,61 +1,32 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Update logo asset and add public All Bookings browsing page",
+  "title": "Show “Model Name” consistently across booking UI",
   "requirements": [
     {
-      "id": "REQ-17",
-      "summary": "Replace the existing Rconnect logo image while keeping the public logo path stable so current header and Shop hero render the new logo without code changes.",
+      "id": "REQ-25",
+      "summary": "Rename all booking UI labels from “Device Model” to “Model Name” while continuing to use the existing `deviceModel` value/field everywhere.",
       "acceptanceCriteria": [
-        "The file `/assets/generated/rconnect-logo.dim_512x512.png` is updated to match the newly uploaded logo (download-1.webp).",
-        "The updated logo renders correctly in the app header (desktop + mobile sheet) and on the Shop page hero section without layout breakage across common viewport sizes."
+        "On the Booking page form (`frontend/src/pages/BookingPage.tsx`), the field label “Device Model” is changed to “Model Name” (and any related helper/validation text uses “Model Name”), while still saving into the existing `deviceModel` field.",
+        "In the Public Bookings booking details dialog (`frontend/src/pages/PublicBookingsPage.tsx`), the device section label “Device Model” is changed to “Model Name” and the displayed value remains `booking.deviceModel`.",
+        "In the Admin Bookings booking details dialog (`frontend/src/pages/AdminBookingsPage.tsx`), the device section label “Device Model” is changed to “Model Name” and the displayed value remains `selectedBooking.deviceModel`.",
+        "No backend schema/types are changed; existing bookings continue to load and display the model name correctly from `deviceModel`."
       ],
       "file_operations": [
         {
-          "path": "frontend/public/assets/generated/rconnect-logo.dim_512x512.png",
+          "path": "frontend/src/pages/BookingPage.tsx",
           "operation": "modify",
-          "description": "Replace the existing PNG contents with the newly uploaded logo artwork from `download-1.webp`, keeping the exact filename and dimensions suffix so existing references (Header + ShopPage hero) continue to work."
-        }
-      ]
-    },
-    {
-      "id": "REQ-18",
-      "summary": "Add a new public, read-only All Bookings page with per-booking details view accessible without login and without any status update controls.",
-      "acceptanceCriteria": [
-        "A new route/page exists (e.g., `/bookings` or equivalent) that is accessible without Internet Identity login and displays all bookings.",
-        "The page supports viewing booking details (dialog or dedicated detail view) and is strictly read-only (no status update controls).",
-        "If the backend previously restricted access to all-bookings data, a new backend query method exists that allows fetching all bookings for this public page, and the frontend page uses that method."
-      ],
-      "file_operations": [
+          "description": "Change the booking form field label from “Device Model” to “Model Name”, and update any related validation/helper text to say “Model Name” while keeping the stored/submitted field as `deviceModel`."
+        },
         {
           "path": "frontend/src/pages/PublicBookingsPage.tsx",
-          "operation": "create",
-          "description": "Create a new public page that lists all bookings and allows opening a read-only booking details view (no status update UI). Use shadcn-ui components (e.g., Card, Badge, Dialog, Skeleton, Alert) for consistent layout and loading/error states. Verify the component's usage instructions before implementing."
+          "operation": "modify",
+          "description": "In the public booking details dialog, change the device info label from “Device Model” to “Model Name” while continuing to display `booking.deviceModel` as the value."
         },
         {
-          "path": "frontend/src/hooks/useBookings.ts",
+          "path": "frontend/src/pages/AdminBookingsPage.tsx",
           "operation": "modify",
-          "description": "Add React Query hooks for the public browsing page that fetch all bookings via the existing public backend capability (e.g., `getAllBookingsPublic`) and optionally fetch a single booking via the public capability (e.g., `getBookingPublic`), using separate query keys from the admin bookings list to avoid cache/authorization coupling."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Register a new public route (e.g., `/bookings`) that renders the new PublicBookingsPage component, ensuring it is not wrapped in AdminGate and remains accessible to anonymous users."
-        }
-      ]
-    },
-    {
-      "id": "REQ-19",
-      "summary": "Expose the public All Bookings page in the main navigation for both desktop and mobile menus.",
-      "acceptanceCriteria": [
-        "A new navigation item (English label) is present in the Header desktop nav and mobile menu that navigates to the public All Bookings page.",
-        "Navigation styling remains consistent with the current theme and active-route behavior."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/layout/Header.tsx",
-          "operation": "modify",
-          "description": "Add a new nav item (e.g., label `Bookings`) pointing to the public bookings route and ensure the active-route styling works consistently across desktop nav and the mobile Sheet menu. Uses existing shadcn-ui Button/Sheet patterns already in this file. Verify the component's usage instructions before implementing."
+          "description": "In the admin booking details dialog, change the device info label from “Device Model” to “Model Name” while continuing to display `selectedBooking.deviceModel` as the value."
         }
       ]
     }

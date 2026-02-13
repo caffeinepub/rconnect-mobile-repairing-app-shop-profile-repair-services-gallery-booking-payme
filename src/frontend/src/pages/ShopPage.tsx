@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Phone, MapPin, Clock, Award, Shield, Wrench } from 'lucide-react';
 import { SHOP_INFO } from '@/constants/shopInfo';
 import { useNavigate } from '@tanstack/react-router';
+import Logo from '@/components/branding/Logo';
 
 export default function ShopPage() {
   const navigate = useNavigate();
@@ -16,8 +17,8 @@ export default function ShopPage() {
       <section className="relative w-full h-[400px] md:h-[500px] overflow-hidden bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-950 dark:to-orange-950">
         {!imageError ? (
           <img
-            src="/assets/generated/rconnect-shop-photo.dim_1200x600.jpg"
-            alt="Rconnect Mobile Repair Shop"
+            src="/assets/generated/mobile-repair-tools-hero.dim_1600x800.jpg"
+            alt="Mobile Repair Tools"
             className="w-full h-full object-cover"
             onError={() => setImageError(true)}
           />
@@ -38,10 +39,9 @@ export default function ShopPage() {
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
           <div className="container mx-auto">
             <div className="flex flex-col items-start gap-4">
-              <img
-                src="/assets/generated/rconnect-logo.dim_512x512.png"
-                alt="Rconnect Logo"
-                className="w-32 h-32 md:w-40 md:h-40 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)] dark:drop-shadow-[0_2px_8px_rgba(255,255,255,0.2)]"
+              <Logo 
+                variant="hero" 
+                className="drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)] dark:drop-shadow-[0_2px_8px_rgba(255,255,255,0.2)]"
               />
               <div>
                 <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-2">
@@ -121,6 +121,60 @@ export default function ShopPage() {
                       <h3 className="font-semibold mb-1">All Brands</h3>
                       <p className="text-sm text-muted-foreground">We repair all major smartphone brands</p>
                     </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Brands We Repair Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-2xl">Brands We Repair</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-6">
+                  From Android to iPhone, we repair all major smartphone brands with expertise and care.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                  <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 hover:shadow-md transition-shadow">
+                    <img
+                      src="/assets/generated/brand-android.dim_256x256.png"
+                      alt="Android"
+                      className="w-16 h-16 object-contain"
+                    />
+                    <span className="text-sm font-medium text-center">Android</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 hover:shadow-md transition-shadow">
+                    <img
+                      src="/assets/generated/brand-iphone.dim_256x256.png"
+                      alt="iPhone"
+                      className="w-16 h-16 object-contain"
+                    />
+                    <span className="text-sm font-medium text-center">iPhone</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 hover:shadow-md transition-shadow">
+                    <img
+                      src="/assets/generated/brand-samsung.dim_256x256.png"
+                      alt="Samsung"
+                      className="w-16 h-16 object-contain"
+                    />
+                    <span className="text-sm font-medium text-center">Samsung</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 hover:shadow-md transition-shadow">
+                    <img
+                      src="/assets/generated/brand-oneplus.dim_256x256.png"
+                      alt="OnePlus"
+                      className="w-16 h-16 object-contain"
+                    />
+                    <span className="text-sm font-medium text-center">OnePlus</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 hover:shadow-md transition-shadow">
+                    <img
+                      src="/assets/generated/brand-xiaomi.dim_256x256.png"
+                      alt="Xiaomi"
+                      className="w-16 h-16 object-contain"
+                    />
+                    <span className="text-sm font-medium text-center">Xiaomi</span>
                   </div>
                 </div>
               </CardContent>

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Phone } from 'lucide-react';
 import { SHOP_INFO } from '@/constants/shopInfo';
+import Logo from '@/components/branding/Logo';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,11 +34,7 @@ export default function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-            <img 
-              src="/assets/generated/rconnect-logo.dim_512x512.png" 
-              alt={SHOP_INFO.name}
-              className="h-10 w-auto object-contain"
-            />
+            <Logo variant="header" />
             <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
               {SHOP_INFO.name}
             </span>
@@ -76,11 +73,7 @@ export default function Header() {
               <SheetContent side="right" className="w-[280px]">
                 <div className="flex flex-col gap-4 mt-8">
                   <div className="flex items-center gap-2 mb-4">
-                    <img 
-                      src="/assets/generated/rconnect-logo.dim_512x512.png" 
-                      alt={SHOP_INFO.name}
-                      className="h-10 w-auto object-contain"
-                    />
+                    <Logo variant="header" />
                     <span className="font-bold text-lg bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
                       {SHOP_INFO.name}
                     </span>

@@ -177,7 +177,7 @@ function BookingsContent() {
                 <div className="space-y-3">
                   <h3 className="font-semibold text-lg">Device Information</h3>
                   <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Device Model</p>
+                    <p className="text-sm text-muted-foreground">Model Name</p>
                     <p className="font-medium">{selectedBooking.deviceModel}</p>
                   </div>
                   <div className="space-y-1">
