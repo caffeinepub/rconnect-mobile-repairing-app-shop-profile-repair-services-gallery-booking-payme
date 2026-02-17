@@ -1,26 +1,15 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-12T14:11:02.620Z",
-  "summary": "REQ-25 is partially implemented: BookingPage validation text now uses “Model name”, and AdminBookingsPage is reported (via summaries) to change the device info label to “Model Name”. The PublicBookings booking details dialog label change to “Model Name” is not evidenced in the provided diff content/summaries, so it is likely missing or unverified.",
-  "missing_requirements": [
-    {
-      "id": "REQ-25",
-      "requirement": "In the Public Bookings booking details dialog (frontend/src/pages/PublicBookingsPage.tsx), change the device section label “Device Model” to “Model Name” while still displaying booking.deviceModel.",
-      "reason": "The provided PublicBookingsPage.tsx diff is truncated before the booking details dialog content, and the frontend-file-summaries.txt entry does not mention the required label/value change for the Public Bookings details dialog.",
-      "evidence": [
-        "frontend/src/pages/PublicBookingsPage.tsx",
-        "frontend-file-summaries.txt"
-      ]
-    }
-  ],
+  "generatedAt": "2026-02-17T11:57:54.026Z",
+  "summary": "REQ-1 appears to be implemented by removing any TopBanner rendering from the shared app Layout so the Header is the first element and remains at the top across routes.",
+  "missing_requirements": [],
   "hallucinated_features": [],
   "confidence": 0.62,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/pages/AdminBookingsPage.tsx",
-    "frontend/src/pages/BookingPage.tsx",
-    "frontend/src/pages/PublicBookingsPage.tsx",
+    "frontend/src/App.tsx",
+    "frontend/src/components/layout/TopBanner.tsx",
     "project_state.json"
   ]
 }

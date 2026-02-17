@@ -2,12 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-booking-ui-so-that-the-device-model-is-consistently-presented-as-model-name-in-all-booking-related-screens-and-dialogs-customer-booking-form-public-bookings-details-dialog-and-admin-bookings-details-dialog-ensuring-the-existing-devicemodel-value-is-what-is-displayed",
-      "featureTitle": "Update the booking UI so that the device model is consistently presented as “Model Name” in all booking-related screens and dialogs (customer booking form, public bookings details dialog, and admin bookings details dialog), ensuring the existing `deviceModel` value is what is displayed.",
+      "featureId": "feature-remove-the-top-banner-image-section-from-the-app-layout-so-no-photo-image-is-displayed-above-the-sticky-header-on-any-page",
+      "featureTitle": "Remove the top banner image section from the app layout so no photo/image is displayed above the sticky header on any page.",
       "files": [
-        "frontend/src/pages/AdminBookingsPage.tsx",
-        "frontend/src/pages/BookingPage.tsx",
-        "frontend/src/pages/PublicBookingsPage.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/components/layout/TopBanner.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -18,7 +17,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-25"
+        "REQ-1"
       ],
       "confidence": "high"
     }

@@ -1,49 +1,38 @@
 {
   "kind": "build_request",
-  "title": "Show 'Model Name' in all booking modals and booking UI",
+  "title": "Remove the top banner image from all pages",
+  "projectName": "Rconnect",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-25",
-      "text": "Update the booking UI so that the device model is consistently presented as “Model Name” in all booking-related screens and dialogs (customer booking form, public bookings details dialog, and admin bookings details dialog), ensuring the existing `deviceModel` value is what is displayed.",
+      "id": "REQ-1",
+      "text": "Remove the top banner image section from the app layout so no photo/image is displayed above the sticky header on any page.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-3"
         ],
         "quotes": [
-          "BOOKING MAI MODAL NAME ADD KARO SAB"
+          "upar wala photo hata do"
         ]
       },
       "acceptanceCriteria": [
-        "On the Booking page form (`frontend/src/pages/BookingPage.tsx`), the field label “Device Model” is changed to “Model Name” (and any related helper/validation text uses “Model Name”), while still saving into the existing `deviceModel` field.",
-        "In the Public Bookings booking details dialog (`frontend/src/pages/PublicBookingsPage.tsx`), the device section label “Device Model” is changed to “Model Name” and the displayed value remains `booking.deviceModel`.",
-        "In the Admin Bookings booking details dialog (`frontend/src/pages/AdminBookingsPage.tsx`), the device section label “Device Model” is changed to “Model Name” and the displayed value remains `selectedBooking.deviceModel`.",
-        "No backend schema/types are changed; existing bookings continue to load and display the model name correctly from `deviceModel`."
+        "The app no longer renders the TopBanner area above the header on all routes.",
+        "The header remains sticky at the top (no blank banner space above it).",
+        "No visual regressions occur in page layout spacing on mobile (e.g., iPhone SE) and desktop."
       ]
     }
   ],
   "constraints": [
-    "Use English for any user-facing text.",
-    "Do not modify any files under `frontend/src/components/ui` or other paths listed as immutable in SYSTEM_CONTEXT.",
-    "Keep backend as a single Motoko actor in `backend/main.mo`; only introduce a migration if strictly required (not expected for this change)."
+    "Do not modify any files under frontend/src/components/ui (Shadcn UI components).",
+    "Do not edit files listed as immutable in SYSTEM_CONTEXT (compose around them instead)."
   ],
   "nonGoals": [
-    "Adding a new backend field separate from `deviceModel` (e.g., a second 'modelName' property).",
-    "Changing booking status logic, permissions, or booking list functionality."
+    "Do not change the header, footer, routing, or any page content beyond removing the top banner image.",
+    "Do not change backend behavior, data models, or Internet Identity authentication."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CheckCircle2, Loader2, Calendar } from 'lucide-react';
 import { useCreateBooking } from '@/hooks/useBookings';
 import { useInternetIdentity } from '@/hooks/useInternetIdentity';
-import LoginButton from '@/components/auth/LoginButton';
+import { dateTimeToNanoseconds } from '@/utils/time';
 
 export default function BookingPage() {
   const navigate = useNavigate();
@@ -72,8 +72,11 @@ export default function BookingPage() {
     }
 
     try {
-      const dateTime = new Date(`${formData.preferredDate}T${formData.preferredTime}`);
-      const preferredDateTime = BigInt(dateTime.getTime()) * BigInt(1_000_000);
+      // Use Safari-safe date/time conversion
+      const preferredDateTime = dateTimeToNanoseconds(
+        formData.preferredDate,
+        formData.preferredTime
+      );
 
       const id = await createBooking.mutateAsync({
         customerName: formData.customerName,
@@ -88,6 +91,7 @@ export default function BookingPage() {
       setBookingId(id);
     } catch (error) {
       console.error('Booking error:', error);
+      // Error is handled by React Query and displayed via createBooking.isError
     }
   };
 
@@ -100,7 +104,7 @@ export default function BookingPage() {
 
   if (bookingId !== null) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-12">
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-12 pb-safe">
         <div className="container mx-auto px-4 max-w-2xl">
           <Card className="border-2 border-green-500/20">
             <CardContent className="pt-12 pb-12 text-center space-y-6">
@@ -162,7 +166,7 @@ export default function BookingPage() {
       </section>
 
       {/* Booking Form */}
-      <section className="container mx-auto px-4 py-12">
+      <section className="container mx-auto px-4 py-12 pb-safe">
         <div className="max-w-2xl mx-auto space-y-6">
           {/* Admin Access */}
           {identity && (

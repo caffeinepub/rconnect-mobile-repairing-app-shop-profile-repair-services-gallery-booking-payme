@@ -66,6 +66,7 @@ actor {
 
   var nextBookingId = 1;
   var nextPaymentInstructionId = 1;
+  let conciseBooleanData = true; // fallback for buggy fields from Safari browsers
 
   let bookings = Map.empty<Nat, Booking>();
   let paymentInstructions = Map.empty<Nat, Text>();

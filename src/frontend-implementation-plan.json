@@ -1,32 +1,26 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Show “Model Name” consistently across booking UI",
+  "title": "Remove TopBanner image from global layout",
   "requirements": [
     {
-      "id": "REQ-25",
-      "summary": "Rename all booking UI labels from “Device Model” to “Model Name” while continuing to use the existing `deviceModel` value/field everywhere.",
+      "id": "REQ-1",
+      "summary": "Remove the TopBanner image section from the shared app layout so the sticky header is the topmost UI element on all routes.",
       "acceptanceCriteria": [
-        "On the Booking page form (`frontend/src/pages/BookingPage.tsx`), the field label “Device Model” is changed to “Model Name” (and any related helper/validation text uses “Model Name”), while still saving into the existing `deviceModel` field.",
-        "In the Public Bookings booking details dialog (`frontend/src/pages/PublicBookingsPage.tsx`), the device section label “Device Model” is changed to “Model Name” and the displayed value remains `booking.deviceModel`.",
-        "In the Admin Bookings booking details dialog (`frontend/src/pages/AdminBookingsPage.tsx`), the device section label “Device Model” is changed to “Model Name” and the displayed value remains `selectedBooking.deviceModel`.",
-        "No backend schema/types are changed; existing bookings continue to load and display the model name correctly from `deviceModel`."
+        "The app no longer renders the TopBanner area above the header on all routes.",
+        "The header remains sticky at the top (no blank banner space above it).",
+        "No visual regressions occur in page layout spacing on mobile (e.g., iPhone SE) and desktop."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/BookingPage.tsx",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Change the booking form field label from “Device Model” to “Model Name”, and update any related validation/helper text to say “Model Name” while keeping the stored/submitted field as `deviceModel`."
+          "description": "Remove the TopBanner import and its render from the Layout component so no banner image appears above the sticky Header on any route."
         },
         {
-          "path": "frontend/src/pages/PublicBookingsPage.tsx",
-          "operation": "modify",
-          "description": "In the public booking details dialog, change the device info label from “Device Model” to “Model Name” while continuing to display `booking.deviceModel` as the value."
-        },
-        {
-          "path": "frontend/src/pages/AdminBookingsPage.tsx",
-          "operation": "modify",
-          "description": "In the admin booking details dialog, change the device info label from “Device Model” to “Model Name” while continuing to display `selectedBooking.deviceModel` as the value."
+          "path": "frontend/src/components/layout/TopBanner.tsx",
+          "operation": "delete",
+          "description": "Delete the unused TopBanner component to prevent orphaned code and ensure the banner image cannot be re-rendered accidentally."
         }
       ]
     }

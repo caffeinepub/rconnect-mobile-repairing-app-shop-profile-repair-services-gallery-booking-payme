@@ -1,6 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { Booking, MakeBookingRequest, BookingStatus } from '@/backend';
+import type { Booking, MakeBookingRequest, BookingStatus } from '../backend';
+
+// Admin hooks (require authentication)
+export function useGetAllBookings() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<Booking[]>({
+    queryKey: ['bookings', 'admin'],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getAllBookings();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
 
 export function useCreateBooking() {
   const { actor } = useActor();
@@ -12,22 +26,13 @@ export function useCreateBooking() {
       return actor.createBooking(request);
     },
     onSuccess: () => {
+      // Invalidate both admin and public booking caches
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
-      queryClient.invalidateQueries({ queryKey: ['bookings-public'] });
     },
-  });
-}
-
-export function useGetAllBookings() {
-  const { actor, isFetching: actorFetching } = useActor();
-
-  return useQuery<Booking[]>({
-    queryKey: ['bookings'],
-    queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getAllBookings();
+    onError: (error) => {
+      console.error('Create booking mutation error:', error);
+      // Error is surfaced to UI via mutation.isError
     },
-    enabled: !!actor && !actorFetching,
   });
 }
 
@@ -36,40 +41,43 @@ export function useUpdateBookingStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ bookingId, newStatus }: { bookingId: bigint; newStatus: BookingStatus }) => {
+    mutationFn: async ({ bookingId, status }: { bookingId: bigint; status: BookingStatus }) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.updateBookingStatus(bookingId, newStatus);
+      return actor.updateBookingStatus(bookingId, status);
     },
     onSuccess: () => {
+      // Invalidate both admin and public booking caches
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
-      queryClient.invalidateQueries({ queryKey: ['bookings-public'] });
+    },
+    onError: (error) => {
+      console.error('Update booking status mutation error:', error);
     },
   });
 }
 
-// Public booking hooks (no authentication required)
+// Public hooks (no authentication required)
 export function useGetAllBookingsPublic() {
-  const { actor, isFetching: actorFetching } = useActor();
+  const { actor, isFetching } = useActor();
 
   return useQuery<Booking[]>({
-    queryKey: ['bookings-public'],
+    queryKey: ['bookings', 'public'],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) return [];
       return actor.getAllBookingsPublic();
     },
-    enabled: !!actor && !actorFetching,
+    enabled: !!actor && !isFetching,
   });
 }
 
 export function useGetBookingPublic(bookingId: bigint | null) {
-  const { actor, isFetching: actorFetching } = useActor();
+  const { actor, isFetching } = useActor();
 
   return useQuery<Booking | null>({
-    queryKey: ['booking-public', bookingId?.toString()],
+    queryKey: ['bookings', 'public', bookingId?.toString()],
     queryFn: async () => {
       if (!actor || !bookingId) return null;
       return actor.getBookingPublic(bookingId);
     },
-    enabled: !!actor && !actorFetching && bookingId !== null,
+    enabled: !!actor && !isFetching && bookingId !== null,
   });
 }

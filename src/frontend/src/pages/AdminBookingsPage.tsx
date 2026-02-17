@@ -39,7 +39,7 @@ function BookingsContent() {
     try {
       await updateStatus.mutateAsync({
         bookingId: selectedBooking.id,
-        newStatus,
+        status: newStatus,
       });
       setSelectedBooking(null);
       setNewStatus(null);
