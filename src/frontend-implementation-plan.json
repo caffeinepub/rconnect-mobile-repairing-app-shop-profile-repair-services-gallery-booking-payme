@@ -1,26 +1,124 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Remove TopBanner image from global layout",
+  "title": "Rconnect — Customer billing (invoice) UI",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Remove the TopBanner image section from the shared app layout so the sticky header is the topmost UI element on all routes.",
+      "id": "REQ-4",
+      "summary": "Add admin invoice generation flow from Admin Bookings booking details, including line items, totals preview, and shareable link with copy action.",
       "acceptanceCriteria": [
-        "The app no longer renders the TopBanner area above the header on all routes.",
-        "The header remains sticky at the top (no blank banner space above it).",
-        "No visual regressions occur in page layout spacing on mobile (e.g., iPhone SE) and desktop."
+        "From the booking details dialog on /admin/bookings, admin can open an invoice creation UI for that booking.",
+        "Admin can add one or more line items (description, quantity, unit price) and optional notes/discount/tax; totals are shown before saving.",
+        "On successful creation, the UI shows the created invoice reference and a shareable URL (including required token/code) with a copy-to-clipboard action.",
+        "UI uses existing authentication pattern (AdminGate) and does not expose admin actions to non-admin users."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Remove the TopBanner import and its render from the Layout component so no banner image appears above the sticky Header on any route."
+          "path": "frontend/src/hooks/useInvoices.ts",
+          "operation": "create",
+          "description": "Create React Query hooks for invoice creation (admin) and related cache invalidation using the existing actor pattern. Keep types aligned with backend.d.ts and expected upcoming invoice shape changes (e.g., line items, discount/tax, totals)."
         },
         {
-          "path": "frontend/src/components/layout/TopBanner.tsx",
-          "operation": "delete",
-          "description": "Delete the unused TopBanner component to prevent orphaned code and ensure the banner image cannot be re-rendered accidentally."
+          "path": "frontend/src/components/invoice/InvoiceComposerDialog.tsx",
+          "operation": "create",
+          "description": "Create an admin-only invoice composer dialog component (composed from existing shadcn/ui components—do not edit ui components) that supports adding/editing/removing line items, optional notes/discount/tax inputs, and a totals preview. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/invoice/LineItemsEditor.tsx",
+          "operation": "create",
+          "description": "Create a reusable line-items editor used by the admin invoice composer, enforcing basic input validation (quantity/unit price) and computing subtotals/totals client-side for preview. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/invoice/invoiceMath.ts",
+          "operation": "create",
+          "description": "Add pure utility functions to compute invoice subtotal, discount/tax application, and grand total from line items; used by the composer and (optionally) the viewer for consistent display."
+        },
+        {
+          "path": "frontend/src/pages/AdminBookingsPage.tsx",
+          "operation": "modify",
+          "description": "Extend the existing booking details dialog to include a 'Generate Invoice' action that opens the InvoiceComposerDialog for the selected booking, calls the invoice creation hook, and upon success shows invoice reference plus a shareable URL with a copy-to-clipboard action. Keep all admin actions inside the existing AdminGate-protected page. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Add customer-facing invoice viewing page with share-parameter loading, error states, receipt layout in English, and print support.",
+      "acceptanceCriteria": [
+        "A new route exists for invoice viewing (e.g., /invoice/:invoiceId) that reads required share parameters (e.g., access code) from the URL.",
+        "The page loads invoice data from the public invoice endpoint and shows a clear error state if invalid/expired.",
+        "The invoice view includes: shop header, invoice number, date, customer details, itemized table, subtotal/discount/tax/total, and notes if present, all in English.",
+        "A Print button triggers window.print(), and the page has print-friendly styling (hides navigation/controls when printing)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/InvoiceViewPage.tsx",
+          "operation": "create",
+          "description": "Create the public invoice viewing page that reads invoiceId from the route and access code from URL parameters (using existing urlParams utilities), fetches invoice data via the public invoice hook, renders a receipt/invoice layout in English, shows a clear error state for invalid/expired access, and includes a Print button that calls window.print()."
+        },
+        {
+          "path": "frontend/src/components/invoice/InvoiceReceipt.tsx",
+          "operation": "create",
+          "description": "Create a presentational receipt component to render the printable invoice (shop header, invoice metadata, customer details, itemized table, totals breakdown, optional notes) with a clean paper-receipt layout. Compose existing shadcn/ui primitives where appropriate. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useInvoices.ts",
+          "operation": "modify",
+          "description": "Add a public invoice-fetching hook that accepts invoiceId + access code, uses the existing actor, and exposes loading/error states suitable for customer viewing."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Register and wire a new TanStack Router route for invoice viewing (e.g., /invoice/$invoiceId) pointing to InvoiceViewPage so the shareable link can navigate directly to the customer invoice."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add print-friendly global styles (via @media print) to hide navigation/controls (e.g., header/footer and explicit 'no-print' areas), normalize background/borders for paper printing, and ensure the invoice content prints cleanly."
+        },
+        {
+          "path": "frontend/src/components/layout/Header.tsx",
+          "operation": "modify",
+          "description": "Ensure the app header is hidden when printing (e.g., apply a print-hidden utility/class) to keep invoices print-friendly."
+        },
+        {
+          "path": "frontend/src/components/layout/Footer.tsx",
+          "operation": "modify",
+          "description": "Ensure the app footer is hidden when printing (e.g., apply a print-hidden utility/class) to keep invoices print-friendly."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Apply a cohesive receipt-like theme to invoice creation and viewing that matches the amber/orange brand and supports light/dark mode with English-only UI text.",
+      "acceptanceCriteria": [
+        "Invoice creation and invoice viewing screens consistently apply the receipt-like theme (spacing, borders, typography, and muted neutrals) while staying compatible with light/dark mode.",
+        "No user-facing text is introduced in any language other than English."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/invoice/receiptTheme.ts",
+          "operation": "create",
+          "description": "Add shared theme helpers (e.g., className constants and small layout helpers) for receipt-like spacing, borders, and typographic hierarchy to ensure consistent styling across invoice creation and viewing."
+        },
+        {
+          "path": "frontend/src/components/invoice/InvoiceComposerDialog.tsx",
+          "operation": "modify",
+          "description": "Apply the shared receipt-like theme to the invoice creation experience (warm neutral surfaces, subtle borders, strong hierarchy) while remaining consistent with the existing amber/orange brand and light/dark mode. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/InvoiceViewPage.tsx",
+          "operation": "modify",
+          "description": "Apply the shared receipt-like theme to the customer invoice view, ensuring all labels/messages are English-only and layout remains clean in both light/dark mode."
+        },
+        {
+          "path": "frontend/src/components/invoice/InvoiceReceipt.tsx",
+          "operation": "modify",
+          "description": "Refine receipt typography and table styling for a paper-like feel (muted neutrals, clear hierarchy, subtle dividers) while staying within the app’s existing amber/orange brand palette. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add minimal global utilities needed for the invoice receipt aesthetic (and printing) while preserving the existing theme variables and light/dark behavior."
         }
       ]
     }

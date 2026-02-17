@@ -10,6 +10,7 @@ import ContactPage from './pages/ContactPage';
 import ReviewsPage from './pages/ReviewsPage';
 import PublicBookingsPage from './pages/PublicBookingsPage';
 import AdminBookingsPage from './pages/AdminBookingsPage';
+import InvoiceViewPage from './pages/InvoiceViewPage';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import AppErrorScreen from './components/system/AppErrorScreen';
@@ -102,6 +103,12 @@ const adminBookingsRoute = createRoute({
   component: AdminBookingsPage,
 });
 
+const invoiceRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/invoice/$invoiceId',
+  component: InvoiceViewPage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   servicesRoute,
@@ -112,6 +119,7 @@ const routeTree = rootRoute.addChildren([
   reviewsRoute,
   bookingsRoute,
   adminBookingsRoute,
+  invoiceRoute,
 ]);
 
 const router = createRouter({ 

@@ -5,18 +5,20 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Calendar, Phone, Smartphone, Clock, User, FileText, CreditCard, Loader2 } from 'lucide-react';
+import { Calendar, Phone, Smartphone, Clock, User, FileText, CreditCard, Loader2, Receipt } from 'lucide-react';
 import { useGetAllBookings, useUpdateBookingStatus } from '@/hooks/useBookings';
 import { formatDateTime } from '@/utils/time';
 import type { Booking, BookingStatus } from '@/backend';
 import AdminGate from '@/components/auth/AdminGate';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import InvoiceComposerDialog from '@/components/invoice/InvoiceComposerDialog';
 
 function BookingsContent() {
   const { data: bookings, isLoading, error } = useGetAllBookings();
   const updateStatus = useUpdateBookingStatus();
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [newStatus, setNewStatus] = useState<BookingStatus | null>(null);
+  const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
 
   const getStatusColor = (status: BookingStatus) => {
     switch (status) {
@@ -46,6 +48,10 @@ function BookingsContent() {
     } catch (error) {
       console.error('Failed to update status:', error);
     }
+  };
+
+  const handleGenerateInvoice = () => {
+    setInvoiceDialogOpen(true);
   };
 
   if (isLoading) {
@@ -249,11 +255,37 @@ function BookingsContent() {
                     </Button>
                   </div>
                 </div>
+
+                {/* Generate Invoice */}
+                <div className="space-y-3 pt-4 border-t">
+                  <h3 className="font-semibold text-lg">Invoice</h3>
+                  <Button
+                    onClick={handleGenerateInvoice}
+                    variant="outline"
+                    className="w-full gap-2"
+                    disabled={selectedBooking.status !== 'completed'}
+                  >
+                    <Receipt className="w-4 h-4" />
+                    Generate Invoice
+                  </Button>
+                  {selectedBooking.status !== 'completed' && (
+                    <p className="text-xs text-muted-foreground">
+                      Invoice can only be generated for completed bookings
+                    </p>
+                  )}
+                </div>
               </div>
             </>
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Invoice Composer Dialog */}
+      <InvoiceComposerDialog
+        booking={selectedBooking}
+        open={invoiceDialogOpen}
+        onOpenChange={setInvoiceDialogOpen}
+      />
     </>
   );
 }

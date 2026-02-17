@@ -1,38 +1,140 @@
 {
   "kind": "build_request",
-  "title": "Remove the top banner image from all pages",
+  "title": "Add customer billing (invoice) feature",
   "projectName": "Rconnect",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Remove the top banner image section from the app layout so no photo/image is displayed above the sticky header on any page.",
-      "target": "frontend",
+      "text": "Add backend invoice data structures and storage so the canister can create, persist, and fetch customer bills (invoices) linked to an existing booking.",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-1"
         ],
         "quotes": [
-          "upar wala photo hata do"
+          "Customer ko bil Banakar deta paye Aisa ek feature add karo"
         ]
       },
       "acceptanceCriteria": [
-        "The app no longer renders the TopBanner area above the header on all routes.",
-        "The header remains sticky at the top (no blank banner space above it).",
-        "No visual regressions occur in page layout spacing on mobile (e.g., iPhone SE) and desktop."
+        "A new Invoice type exists that includes: invoiceId, bookingId, customerName, phoneNumber, createdAt timestamp, line items (description, quantity, unit price), optional discount/tax, computed totals, and optional notes.",
+        "Invoices are stored in canister state and can be retrieved later without relying on frontend-only state.",
+        "Attempting to create an invoice for a non-existent booking returns a clear error (trap or Result-style error)."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Expose admin-protected backend endpoints to create an invoice for a booking and to list/get invoices for administration.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Customer ko bil Banakar deta paye Aisa ek feature add karo"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Only admins can create invoices and list all invoices.",
+        "Admin can fetch a single invoice by invoiceId.",
+        "API supports listing invoices filtered by bookingId (so invoices for a particular booking can be found)."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Expose a public (no-login) backend endpoint to fetch an invoice for customer viewing using a shareable access mechanism (e.g., invoiceId plus a secret access code/token returned at creation time).",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Customer ko bil Banakar deta paye Aisa ek feature add karo"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A public endpoint exists that returns invoice details only when provided valid share parameters (e.g., invoiceId + accessCode).",
+        "Invalid or missing share parameters do not leak invoice data.",
+        "The access mechanism returned to admin at invoice creation time can be copied/shared with a customer."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Add an admin UI flow on the existing Admin Bookings page to generate an invoice for a selected booking, including adding/editing line items and producing a shareable invoice link.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Customer ko bil Banakar deta paye Aisa ek feature add karo"
+        ]
+      },
+      "acceptanceCriteria": [
+        "From the booking details dialog on /admin/bookings, admin can open an invoice creation UI for that booking.",
+        "Admin can add one or more line items (description, quantity, unit price) and optional notes/discount/tax; totals are shown before saving.",
+        "On successful creation, the UI shows the created invoice reference and a shareable URL (including required token/code) with a copy-to-clipboard action.",
+        "UI uses existing authentication pattern (AdminGate) and does not expose admin actions to non-admin users."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Add a customer-facing invoice view page that renders a printable bill in English (receipt/invoice layout) and supports browser printing.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Customer ko bil Banakar deta paye Aisa ek feature add karo"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A new route exists for invoice viewing (e.g., /invoice/:invoiceId) that reads required share parameters (e.g., access code) from the URL.",
+        "The page loads invoice data from the public invoice endpoint and shows a clear error state if invalid/expired.",
+        "The invoice view includes: shop header, invoice number, date, customer details, itemized table, subtotal/discount/tax/total, and notes if present, all in English.",
+        "A Print button triggers window.print(), and the page has print-friendly styling (hides navigation/controls when printing)."
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Establish and apply a cohesive visual theme for the new invoice experiences that matches the existing amber/orange brand but feels like a clean paper receipt (warm neutral background, strong typographic hierarchy, subtle borders).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Invoice creation and invoice viewing screens consistently apply the receipt-like theme (spacing, borders, typography, and muted neutrals) while staying compatible with light/dark mode.",
+        "No user-facing text is introduced in any language other than English."
       ]
     }
   ],
   "constraints": [
-    "Do not modify any files under frontend/src/components/ui (Shadcn UI components).",
-    "Do not edit files listed as immutable in SYSTEM_CONTEXT (compose around them instead)."
+    "Backend must remain a single Motoko actor in backend/main.mo.",
+    "Do not edit files under frontend/src/components/ui (compose them instead).",
+    "Do not edit immutable hook/bootstrap files listed in SYSTEM_CONTEXT (e.g., frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/main.tsx)."
   ],
   "nonGoals": [
-    "Do not change the header, footer, routing, or any page content beyond removing the top banner image.",
-    "Do not change backend behavior, data models, or Internet Identity authentication."
+    "Generating or emailing PDF invoices via third-party services.",
+    "Integrating external databases or payment gateways for invoice settlement.",
+    "Customer authentication beyond the existing Internet Identity setup (public invoice viewing should not require login)."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [
+      "Use English for all user-facing UI text."
+    ],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

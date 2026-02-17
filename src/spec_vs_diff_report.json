@@ -1,15 +1,103 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-17T11:57:54.026Z",
-  "summary": "REQ-1 appears to be implemented by removing any TopBanner rendering from the shared app Layout so the Header is the first element and remains at the top across routes.",
-  "missing_requirements": [],
-  "hallucinated_features": [],
-  "confidence": 0.62,
+  "generatedAt": "2026-02-17T13:07:14.797Z",
+  "summary": "Invoice feature is partially implemented: frontend has an invoice composer dialog, public invoice view page with print support, and React Query hooks calling new backend invoice APIs. Backend shows a new Invoice type and invoice storage map, but the data model and share-link mechanism do not match the BuildRequest acceptance criteria, and several required admin/public API behaviors are not evidenced in the diff.",
+  "missing_requirements": [
+    {
+      "id": "REQ-1",
+      "requirement": "Invoice type must include invoiceId, bookingId, customerName, phoneNumber, createdAt timestamp, line items (description, quantity, unit price), optional discount/tax, computed totals, and optional notes; invoices must be persisted and retrievable; creating for non-existent booking returns clear error.",
+      "reason": "Backend Invoice type shown does not include phoneNumber, line items, discount/tax fields, computed totals, or optional notes as structured fields (it instead stores amount and a freeform description Text). Also, behavior for non-existent booking on invoice creation is not evidenced in the truncated backend diff.",
+      "evidence": [
+        "backend/main.mo (Invoice type fields: id, bookingId, customerName, amount, description, status, createdAt, paymentDate, publicAccessCode; no phoneNumber/lineItems/discount/tax/totals/notes shown)",
+        "frontend/src/components/invoice/InvoiceReceipt.tsx (parses line items/discount/tax/notes from invoice.description JSON instead of typed backend fields)",
+        "frontend/src/components/invoice/InvoiceComposerDialog.tsx (serializes line items/discount/tax/notes into JSON string stored as description)"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "Admin-protected backend endpoints: only admins can create invoices and list all invoices; admin can fetch single invoice by invoiceId; listing supports filtering by bookingId.",
+      "reason": "Frontend calls createInvoice/getAllInvoices/getInvoice, but the diff summary does not show the backend function implementations or any admin authorization checks for these endpoints, nor any endpoint for listing invoices filtered by bookingId.",
+      "evidence": [
+        "frontend/src/hooks/useInvoices.ts (calls actor.createInvoice, actor.getAllInvoices, actor.getInvoice)",
+        "backend/main.mo (only shows types/storage; no invoice endpoint implementations visible in provided truncation)"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "requirement": "Public no-login backend endpoint to fetch invoice for customer viewing using shareable access mechanism (invoiceId + secret access code/token returned at creation). Invalid/missing share params must not leak invoice data.",
+      "reason": "While the frontend calls a public endpoint (getInvoicePublic) and expects an access code, the invoice share URL is constructed using booking.id as the invoiceId with a comment indicating the backend does not return the invoiceId. This does not satisfy the requirement that the share mechanism is based on invoiceId + access code returned at creation time. Backend enforcement of invalid/missing share parameters is not evidenced in the shown backend diff.",
+      "evidence": [
+        "frontend/src/hooks/useInvoices.ts (calls actor.getInvoicePublic(invoiceId, accessCode))",
+        "frontend/src/components/invoice/InvoiceComposerDialog.tsx (getShareableLink: \"invoiceId is derived from bookingId for now\" / \"backend should return the invoiceId\")"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "requirement": "Admin UI flow on /admin/bookings booking details dialog to create invoice for that booking: add/edit line items, optional notes/discount/tax; show totals before saving; after creation show invoice reference and a shareable URL (including token/code) with copy-to-clipboard action; admin-only via AdminGate.",
+      "reason": "Invoice creation UI and copy-to-clipboard exist, but the UI explicitly does not have the real created invoiceId and therefore cannot reliably show the created invoice reference or generate the correct /invoice/:invoiceId link based on the actual invoiceId returned by backend.",
+      "evidence": [
+        "frontend/src/components/invoice/InvoiceComposerDialog.tsx (creates shareable link using booking.id as invoiceId; comment says backend should return invoiceId)",
+        "frontend/src/pages/AdminBookingsPage.tsx (imports InvoiceComposerDialog; integration shown but details truncated)"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "requirement": "Customer invoice view includes shop header, invoice number, date, customer details, itemized table, subtotal/discount/tax/total, and notes if present; printable with print button and print-friendly styling.",
+      "reason": "Customer details in the receipt view do not show the phone number (required by REQ-1/REQ-5 customer details). The backend Invoice type shown also lacks phoneNumber, making this impossible to render as specified.",
+      "evidence": [
+        "frontend/src/components/invoice/InvoiceReceipt.tsx (Bill To shows invoice.customerName and bookingId but no phone number)",
+        "backend/main.mo (Invoice type has customerName but no phoneNumber)"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Invoice lifecycle management beyond creation/viewing: invoice status (pending/paid/cancelled) and a 'markInvoiceAsPaid' mutation/hook.",
+      "reason": "BuildRequest focuses on invoice creation, admin listing/get, and public viewing via share link; it does not request payment status management or marking invoices as paid.",
+      "evidence": [
+        "backend/main.mo (InvoiceStatus type and status/paymentDate fields in Invoice)",
+        "frontend/src/hooks/useInvoices.ts (useMarkInvoiceAsPaid calling actor.markInvoiceAsPaid)"
+      ]
+    },
+    {
+      "description": "Caffeine.ai attribution link added to footer (\"Built with ❤️ using caffeine.ai\" with UTM parameters).",
+      "reason": "Not requested by any REQ; unrelated to invoice feature/theme requirements.",
+      "evidence": [
+        "frontend/src/components/layout/Footer.tsx"
+      ]
+    },
+    {
+      "description": "Broad non-invoice site content/feature expansions (e.g., ShopPage hero/brands section, Services catalog restructuring, Gallery modal/items changes) indicated in the file summaries.",
+      "reason": "BuildRequest only asks for invoice/billing features and invoice theming; these additions are out of scope.",
+      "evidence": [
+        "frontend-file-summaries.txt (entries for ShopPage, ServicesPage, servicesCatalog, GalleryPage, galleryItems describing new/expanded features)"
+      ]
+    },
+    {
+      "description": "Global theme overhaul in index.css (OKLCH amber/orange tokens for the whole app) rather than limiting styling to invoice experiences.",
+      "reason": "REQ-6 requires a cohesive theme for the new invoice experiences; changing global design tokens app-wide is not explicitly requested.",
+      "evidence": [
+        "frontend/src/index.css (redefines :root and .dark theme tokens globally)"
+      ]
+    }
+  ],
+  "confidence": 0.74,
   "changed_files": [
+    "backend/main.mo",
     "frontend-file-summaries.txt",
     "frontend/src/App.tsx",
-    "frontend/src/components/layout/TopBanner.tsx",
+    "frontend/src/components/invoice/InvoiceComposerDialog.tsx",
+    "frontend/src/components/invoice/InvoiceReceipt.tsx",
+    "frontend/src/components/invoice/LineItemsEditor.tsx",
+    "frontend/src/components/invoice/invoiceMath.ts",
+    "frontend/src/components/invoice/receiptTheme.ts",
+    "frontend/src/components/layout/Footer.tsx",
+    "frontend/src/components/layout/Header.tsx",
+    "frontend/src/hooks/useInvoices.ts",
+    "frontend/src/index.css",
+    "frontend/src/pages/AdminBookingsPage.tsx",
+    "frontend/src/pages/InvoiceViewPage.tsx",
     "project_state.json"
   ]
 }

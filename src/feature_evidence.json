@@ -2,11 +2,14 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-remove-the-top-banner-image-section-from-the-app-layout-so-no-photo-image-is-displayed-above-the-sticky-header-on-any-page",
-      "featureTitle": "Remove the top banner image section from the app layout so no photo/image is displayed above the sticky header on any page.",
+      "featureId": "feature-add-an-admin-ui-flow-on-the-existing-admin-bookings-page-to-generate-an-invoice-for-a-selected-booking-including-adding-editing-line-items-and-producing-a-shareable-invoice-link",
+      "featureTitle": "Add an admin UI flow on the existing Admin Bookings page to generate an invoice for a selected booking, including adding/editing line items and producing a shareable invoice link.",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/layout/TopBanner.tsx"
+        "frontend/src/components/invoice/InvoiceComposerDialog.tsx",
+        "frontend/src/components/invoice/LineItemsEditor.tsx",
+        "frontend/src/components/invoice/invoiceMath.ts",
+        "frontend/src/hooks/useInvoices.ts",
+        "frontend/src/pages/AdminBookingsPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -17,7 +20,55 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-1"
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-customer-facing-invoice-view-page-that-renders-a-printable-bill-in-english-receipt-invoice-layout-and-supports-browser-printing",
+      "featureTitle": "Add a customer-facing invoice view page that renders a printable bill in English (receipt/invoice layout) and supports browser printing.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/invoice/InvoiceReceipt.tsx",
+        "frontend/src/components/layout/Footer.tsx",
+        "frontend/src/components/layout/Header.tsx",
+        "frontend/src/hooks/useInvoices.ts",
+        "frontend/src/index.css",
+        "frontend/src/pages/InvoiceViewPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-establish-and-apply-a-cohesive-visual-theme-for-the-new-invoice-experiences-that-matches-the-existing-amber-orange-brand-but-feels-like-a-clean-paper-receipt-warm-neutral-background-strong-typographic-hierarchy-subtle-borders",
+      "featureTitle": "Establish and apply a cohesive visual theme for the new invoice experiences that matches the existing amber/orange brand but feels like a clean paper receipt (warm neutral background, strong typographic hierarchy, subtle borders).",
+      "files": [
+        "frontend/src/components/invoice/InvoiceComposerDialog.tsx",
+        "frontend/src/components/invoice/InvoiceReceipt.tsx",
+        "frontend/src/components/invoice/receiptTheme.ts",
+        "frontend/src/index.css",
+        "frontend/src/pages/InvoiceViewPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
       ],
       "confidence": "high"
     }

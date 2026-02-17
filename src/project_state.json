@@ -4,13 +4,29 @@
   "summary": "New project",
   "architectural_notes": [],
   "known_issues": [],
-  "isFixRequest": true,
+  "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-remove-the-top-banner-image-section-from-the-app-layout-so-no-photo-image-is-displayed-above-the-sticky-header-on-any-page",
-      "title": "Remove the top banner image section from the app layout so no photo/image is displayed above the sticky header on any page.",
+      "id": "feature-add-an-admin-ui-flow-on-the-existing-admin-bookings-page-to-generate-an-invoice-for-a-selected-booking-including-adding-editing-line-items-and-producing-a-shareable-invoice-link",
+      "title": "Add an admin UI flow on the existing Admin Bookings page to generate an invoice for a selected booking, including adding/editing line items and producing a shareable invoice link.",
       "reqIds": [
-        "REQ-1"
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-customer-facing-invoice-view-page-that-renders-a-printable-bill-in-english-receipt-invoice-layout-and-supports-browser-printing",
+      "title": "Add a customer-facing invoice view page that renders a printable bill in English (receipt/invoice layout) and supports browser printing.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-establish-and-apply-a-cohesive-visual-theme-for-the-new-invoice-experiences-that-matches-the-existing-amber-orange-brand-but-feels-like-a-clean-paper-receipt-warm-neutral-background-strong-typographic-hierarchy-subtle-borders",
+      "title": "Establish and apply a cohesive visual theme for the new invoice experiences that matches the existing amber/orange brand but feels like a clean paper receipt (warm neutral background, strong typographic hierarchy, subtle borders).",
+      "reqIds": [
+        "REQ-6"
       ],
       "version": 1
     }
@@ -18,8 +34,32 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Remove the photo/image shown at the top of the app UI (\"upar wala photo hata do\")",
+      "summary": "Add a feature to create/generate a bill (invoice) for a customer",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Add backend invoice data structures and storage so the canister can create, persist, and fetch customer bills (invoices) linked to an existing booking.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Expose admin-protected backend endpoints to create an invoice for a booking and to list/get invoices for administration.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Expose a public (no-login) backend endpoint to fetch an invoice for customer viewing using a shareable access mechanism (e.g., invoiceId plus a secret access code/token returned at creation time).",
+      "reqIds": [
+        "REQ-3"
+      ],
       "status": "pending"
     }
   ],

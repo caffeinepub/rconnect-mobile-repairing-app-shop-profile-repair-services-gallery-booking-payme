@@ -1,37 +1,121 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-17T11:57:54.029Z",
+  "generatedAt": "2026-02-17T13:07:14.803Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 1,
-    "implemented": 1,
+    "total": 6,
+    "implemented": 3,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Remove the top banner image section from the app layout so no photo/image is displayed above the sticky header on any page.",
+        "summary": "Add backend invoice data structures and storage so the canister can create, persist, and fetch customer bills (invoices) linked to an existing booking.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Expose admin-protected backend endpoints to create an invoice for a booking and to list/get invoices for administration.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Expose a public (no-login) backend endpoint to fetch an invoice for customer viewing using a shareable access mechanism (e.g., invoiceId plus a secret access code/token returned at creation time).",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Add an admin UI flow on the existing Admin Bookings page to generate an invoice for a selected booking, including adding/editing line items and producing a shareable invoice link.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/App.tsx",
-          "frontend/src/components/layout/TopBanner.tsx"
+          "frontend/src/hooks/useInvoices.ts",
+          "frontend/src/components/invoice/InvoiceComposerDialog.tsx",
+          "frontend/src/components/invoice/LineItemsEditor.tsx",
+          "frontend/src/components/invoice/invoiceMath.ts",
+          "frontend/src/pages/AdminBookingsPage.tsx"
         ],
         "matchedFiles": [
+          "frontend/src/hooks/useInvoices.ts",
+          "frontend/src/components/invoice/InvoiceComposerDialog.tsx",
+          "frontend/src/components/invoice/LineItemsEditor.tsx",
+          "frontend/src/components/invoice/invoiceMath.ts",
+          "frontend/src/pages/AdminBookingsPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Add a customer-facing invoice view page that renders a printable bill in English (receipt/invoice layout) and supports browser printing.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/InvoiceViewPage.tsx",
+          "frontend/src/components/invoice/InvoiceReceipt.tsx",
+          "frontend/src/hooks/useInvoices.ts",
           "frontend/src/App.tsx",
-          "frontend/src/components/layout/TopBanner.tsx"
+          "frontend/src/index.css",
+          "frontend/src/components/layout/Header.tsx",
+          "frontend/src/components/layout/Footer.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/InvoiceViewPage.tsx",
+          "frontend/src/components/invoice/InvoiceReceipt.tsx",
+          "frontend/src/hooks/useInvoices.ts",
+          "frontend/src/App.tsx",
+          "frontend/src/index.css",
+          "frontend/src/components/layout/Header.tsx",
+          "frontend/src/components/layout/Footer.tsx"
+        ]
+      },
+      {
+        "id": "REQ-6",
+        "summary": "Establish and apply a cohesive visual theme for the new invoice experiences that matches the existing amber/orange brand but feels like a clean paper receipt (warm neutral background, strong typographic hierarchy, subtle borders).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/invoice/receiptTheme.ts",
+          "frontend/src/components/invoice/InvoiceComposerDialog.tsx",
+          "frontend/src/pages/InvoiceViewPage.tsx",
+          "frontend/src/components/invoice/InvoiceReceipt.tsx",
+          "frontend/src/index.css"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/invoice/receiptTheme.ts",
+          "frontend/src/components/invoice/InvoiceComposerDialog.tsx",
+          "frontend/src/pages/InvoiceViewPage.tsx",
+          "frontend/src/components/invoice/InvoiceReceipt.tsx",
+          "frontend/src/index.css"
         ]
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/src/App.tsx",
-    "frontend/src/components/layout/TopBanner.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/invoice/InvoiceComposerDialog.tsx",
+    "frontend/src/components/invoice/InvoiceReceipt.tsx",
+    "frontend/src/components/invoice/LineItemsEditor.tsx",
+    "frontend/src/components/invoice/invoiceMath.ts",
+    "frontend/src/components/invoice/receiptTheme.ts",
+    "frontend/src/components/layout/Footer.tsx",
+    "frontend/src/components/layout/Header.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useInvoices.ts",
+    "frontend/src/index.css",
+    "frontend/src/pages/AdminBookingsPage.tsx",
+    "frontend/src/pages/InvoiceViewPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

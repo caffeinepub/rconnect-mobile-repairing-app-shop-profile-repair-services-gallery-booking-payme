@@ -26,6 +26,20 @@ export type BookingStatus = { 'cancelled' : null } |
   { 'pending' : null } |
   { 'completed' : null } |
   { 'confirmed' : null };
+export interface Invoice {
+  'id' : bigint,
+  'customerName' : string,
+  'status' : InvoiceStatus,
+  'bookingId' : bigint,
+  'publicAccessCode' : string,
+  'createdAt' : Time,
+  'description' : string,
+  'paymentDate' : [] | [Time],
+  'amount' : string,
+}
+export type InvoiceStatus = { 'cancelled' : null } |
+  { 'pending' : null } |
+  { 'paid' : null };
 export interface MakeBookingRequest {
   'customerName' : string,
   'photoNotes' : [] | [string],
@@ -54,18 +68,40 @@ export interface _SERVICE {
   'addPaymentInstruction' : ActorMethod<[string], bigint>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'createBooking' : ActorMethod<[MakeBookingRequest], bigint>,
+  /**
+   * / Creates a new invoice linked to a booking.
+   * / Returns the public access code needed for customer viewing.
+   */
+  'createInvoice' : ActorMethod<[bigint, string, string], string>,
   'deletePaymentInstruction' : ActorMethod<[bigint], undefined>,
   'getAllBookingEntries' : ActorMethod<[], Array<Booking>>,
   'getAllBookings' : ActorMethod<[], Array<Booking>>,
   'getAllBookingsPublic' : ActorMethod<[], Array<Booking>>,
+  /**
+   * / Returns admin list of all invoices.
+   */
+  'getAllInvoices' : ActorMethod<[], Array<Invoice>>,
   'getAllPaymentInstructions' : ActorMethod<[], Array<[bigint, string]>>,
   'getAllReviews' : ActorMethod<[], Array<Review>>,
   'getBooking' : ActorMethod<[bigint], Booking>,
   'getBookingPublic' : ActorMethod<[bigint], Booking>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  /**
+   * / Fetches an invoice. ADMIN endpoint! Used for admin backend access.
+   */
+  'getInvoice' : ActorMethod<[bigint], Invoice>,
+  /**
+   * / PUBLIC ENDPOINT
+   * / Fetches an invoice if the public access code matches.
+   */
+  'getInvoicePublic' : ActorMethod<[bigint, string], Invoice>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  /**
+   * / Marks an invoice as paid.
+   */
+  'markInvoiceAsPaid' : ActorMethod<[bigint], undefined>,
   'processPayment' : ActorMethod<[bigint, string], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'submitReview' : ActorMethod<[string, string], undefined>,

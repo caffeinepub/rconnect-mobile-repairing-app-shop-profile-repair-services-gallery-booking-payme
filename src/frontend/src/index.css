@@ -3,129 +3,129 @@
 @tailwind utilities;
 
 @layer base {
-    :root {
-        --radius: 0.5rem;
-        
-        /* Amber/Orange theme for mobile repair shop */
-        --background: 0.99 0 0;
-        --foreground: 0.15 0 0;
-        
-        --card: 1 0 0;
-        --card-foreground: 0.15 0 0;
-        
-        --popover: 1 0 0;
-        --popover-foreground: 0.15 0 0;
-        
-        --primary: 0.65 0.15 45;
-        --primary-foreground: 0.99 0 0;
-        
-        --secondary: 0.96 0.01 60;
-        --secondary-foreground: 0.15 0 0;
-        
-        --muted: 0.96 0.01 60;
-        --muted-foreground: 0.50 0 0;
-        
-        --accent: 0.96 0.01 60;
-        --accent-foreground: 0.15 0 0;
-        
-        --destructive: 0.58 0.24 27;
-        --destructive-foreground: 0.99 0 0;
-        
-        --border: 0.92 0.01 60;
-        --input: 0.92 0.01 60;
-        --ring: 0.65 0.15 45;
-        
-        --chart-1: 0.65 0.15 45;
-        --chart-2: 0.70 0.18 30;
-        --chart-3: 0.60 0.12 60;
-        --chart-4: 0.55 0.10 90;
-        --chart-5: 0.75 0.20 15;
-    }
+  :root {
+    /* Amber/Orange Theme - Light Mode */
+    --background: 98% 0.01 106;
+    --foreground: 20% 0.01 106;
+    --card: 100% 0 0;
+    --card-foreground: 20% 0.01 106;
+    --popover: 100% 0 0;
+    --popover-foreground: 20% 0.01 106;
+    --primary: 65% 0.19 55;
+    --primary-foreground: 98% 0.01 106;
+    --secondary: 96% 0.02 106;
+    --secondary-foreground: 20% 0.01 106;
+    --muted: 96% 0.02 106;
+    --muted-foreground: 50% 0.01 106;
+    --accent: 70% 0.15 45;
+    --accent-foreground: 20% 0.01 106;
+    --destructive: 55% 0.22 25;
+    --destructive-foreground: 98% 0.01 106;
+    --border: 90% 0.02 106;
+    --input: 90% 0.02 106;
+    --ring: 65% 0.19 55;
+    --chart-1: 65% 0.19 55;
+    --chart-2: 70% 0.15 45;
+    --chart-3: 75% 0.12 35;
+    --chart-4: 80% 0.09 25;
+    --chart-5: 85% 0.06 15;
+    --radius: 0.5rem;
+  }
 
-    .dark {
-        --background: 0.12 0 0;
-        --foreground: 0.98 0 0;
-        
-        --card: 0.15 0 0;
-        --card-foreground: 0.98 0 0;
-        
-        --popover: 0.15 0 0;
-        --popover-foreground: 0.98 0 0;
-        
-        --primary: 0.70 0.18 45;
-        --primary-foreground: 0.12 0 0;
-        
-        --secondary: 0.20 0.01 45;
-        --secondary-foreground: 0.98 0 0;
-        
-        --muted: 0.20 0.01 45;
-        --muted-foreground: 0.65 0 0;
-        
-        --accent: 0.25 0.02 45;
-        --accent-foreground: 0.98 0 0;
-        
-        --destructive: 0.62 0.22 27;
-        --destructive-foreground: 0.98 0 0;
-        
-        --border: 0.25 0.01 45;
-        --input: 0.25 0.01 45;
-        --ring: 0.65 0.15 45;
-        
-        --chart-1: 0.70 0.18 45;
-        --chart-2: 0.75 0.20 30;
-        --chart-3: 0.65 0.15 60;
-        --chart-4: 0.60 0.12 90;
-        --chart-5: 0.80 0.22 15;
-    }
+  .dark {
+    /* Amber/Orange Theme - Dark Mode */
+    --background: 20% 0.01 106;
+    --foreground: 98% 0.01 106;
+    --card: 25% 0.01 106;
+    --card-foreground: 98% 0.01 106;
+    --popover: 25% 0.01 106;
+    --popover-foreground: 98% 0.01 106;
+    --primary: 70% 0.17 50;
+    --primary-foreground: 20% 0.01 106;
+    --secondary: 30% 0.02 106;
+    --secondary-foreground: 98% 0.01 106;
+    --muted: 30% 0.02 106;
+    --muted-foreground: 65% 0.01 106;
+    --accent: 75% 0.13 40;
+    --accent-foreground: 20% 0.01 106;
+    --destructive: 60% 0.20 25;
+    --destructive-foreground: 98% 0.01 106;
+    --border: 35% 0.02 106;
+    --input: 35% 0.02 106;
+    --ring: 70% 0.17 50;
+    --chart-1: 70% 0.17 50;
+    --chart-2: 75% 0.13 40;
+    --chart-3: 80% 0.10 30;
+    --chart-4: 85% 0.07 20;
+    --chart-5: 90% 0.04 10;
+  }
+}
 
-    * {
-        @apply border-border;
-    }
-    
-    body {
-        @apply bg-background text-foreground;
-        font-feature-settings: "rlig" 1, "calt" 1;
-    }
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
 
-    /* iOS Safari safe area and dynamic viewport support */
-    html {
-        /* Support for iOS safe areas */
-        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-    }
+/* iOS Safari safe area support */
+@supports (padding: max(0px)) {
+  .safe-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+  .safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  .safe-left {
+    padding-left: max(1rem, env(safe-area-inset-left));
+  }
+  .safe-right {
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
 
-    /* Dynamic viewport height utilities for iOS Safari */
-    .min-h-dvh {
-        min-height: 100vh; /* Fallback */
-        min-height: 100dvh; /* Dynamic viewport height */
-    }
+/* Dynamic viewport height for mobile browsers */
+.min-h-dvh {
+  min-height: 100dvh;
+}
 
-    .h-dvh {
-        height: 100vh; /* Fallback */
-        height: 100dvh; /* Dynamic viewport height */
-    }
+/* Print styles for invoices */
+@media print {
+  /* Hide navigation and controls */
+  .print\:hidden,
+  header,
+  footer,
+  nav,
+  .no-print {
+    display: none !important;
+  }
 
-    /* Safe area utilities for iOS notch/home indicator */
-    .safe-top {
-        padding-top: env(safe-area-inset-top);
-    }
+  /* Reset page margins */
+  @page {
+    margin: 0.5cm;
+  }
 
-    .safe-bottom {
-        padding-bottom: env(safe-area-inset-bottom);
-    }
+  /* Ensure clean printing */
+  body {
+    background: white !important;
+    color: black !important;
+  }
 
-    .safe-left {
-        padding-left: env(safe-area-inset-left);
-    }
+  /* Remove shadows and borders for cleaner print */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
 
-    .safe-right {
-        padding-right: env(safe-area-inset-right);
-    }
+  /* Ensure invoice content prints well */
+  .print\:block {
+    display: block !important;
+  }
 
-    .pb-safe {
-        padding-bottom: max(1rem, env(safe-area-inset-bottom));
-    }
-
-    .pt-safe {
-        padding-top: max(1rem, env(safe-area-inset-top));
-    }
+  /* Avoid page breaks inside important elements */
+  .print\:break-inside-avoid {
+    break-inside: avoid;
+  }
 }
