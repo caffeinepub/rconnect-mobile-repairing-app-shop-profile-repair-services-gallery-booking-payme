@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { useInternetIdentity } from '@/hooks/useInternetIdentity';
 import { useIsCallerAdmin } from '@/hooks/useAuth';
+import { useActor } from '@/hooks/useActor';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Shield, Loader2 } from 'lucide-react';
@@ -13,13 +14,15 @@ interface AdminGateProps {
 
 export default function AdminGate({ children }: AdminGateProps) {
   const { identity, isInitializing } = useInternetIdentity();
-  const { data: isAdmin, isLoading: isCheckingAdmin } = useIsCallerAdmin();
+  const { actor, isFetching: actorFetching } = useActor();
+  const { data: isAdmin, isLoading: isCheckingAdmin, isFetched } = useIsCallerAdmin();
   const navigate = useNavigate();
 
   const isAuthenticated = !!identity;
 
-  // Show loading state while checking authentication
-  if (isInitializing || (isAuthenticated && isCheckingAdmin)) {
+  // Show loading state while initializing or checking authentication
+  // Wait for actor to be ready and admin check to complete
+  if (isInitializing || actorFetching || (isAuthenticated && !isFetched)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-muted/20">
         <Card className="w-full max-w-md">
@@ -62,7 +65,7 @@ export default function AdminGate({ children }: AdminGateProps) {
   }
 
   // Show access denied if authenticated but not admin
-  if (!isAdmin) {
+  if (isAuthenticated && isFetched && !isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-muted/20 p-4">
         <Card className="w-full max-w-md border-destructive/50">

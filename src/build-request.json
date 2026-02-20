@@ -1,140 +1,81 @@
 {
   "kind": "build_request",
-  "title": "Add customer billing (invoice) feature",
-  "projectName": "Rconnect",
+  "title": "Display customer's previous bookings in the bookings list",
+  "projectName": "Rconnect Mobile Repair",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Add backend invoice data structures and storage so the canister can create, persist, and fetch customer bills (invoices) linked to an existing booking.",
+      "text": "Add a backend query function that retrieves all bookings for a specific phone number, returning the complete booking history for that customer",
       "target": "backend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-user-previous-1",
+          "msg-user-current"
         ],
         "quotes": [
-          "Customer ko bil Banakar deta paye Aisa ek feature add karo"
+          "Customer ka pahle wala booking Jo Kiya hua tha vah repeat lekar aao ismein",
+          "ha"
         ]
       },
       "acceptanceCriteria": [
-        "A new Invoice type exists that includes: invoiceId, bookingId, customerName, phoneNumber, createdAt timestamp, line items (description, quantity, unit price), optional discount/tax, computed totals, and optional notes.",
-        "Invoices are stored in canister state and can be retrieved later without relying on frontend-only state.",
-        "Attempting to create an invoice for a non-existent booking returns a clear error (trap or Result-style error)."
+        "Backend function accepts a phone number as input",
+        "Returns all bookings matching that phone number",
+        "Bookings are sorted by creation date (newest first)"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Expose admin-protected backend endpoints to create an invoice for a booking and to list/get invoices for administration.",
-      "target": "backend",
+      "text": "Update PublicBookingsPage to display all previous bookings for the searched phone number, showing each booking's ID, service type, device details, status, and date in a list or card format",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-user-previous-1",
+          "msg-user-current"
         ],
         "quotes": [
-          "Customer ko bil Banakar deta paye Aisa ek feature add karo"
+          "Customer ka pahle wala booking Jo Kiya hua tha vah repeat lekar aao ismein"
         ]
       },
       "acceptanceCriteria": [
-        "Only admins can create invoices and list all invoices.",
-        "Admin can fetch a single invoice by invoiceId.",
-        "API supports listing invoices filtered by bookingId (so invoices for a particular booking can be found)."
+        "When a user searches by booking ID and phone number, all bookings for that phone number are displayed",
+        "Each booking card shows booking ID, service category, device model, status, and booking date",
+        "The searched booking is highlighted or shown first",
+        "Previous bookings are clearly labeled or separated from the current search result"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Expose a public (no-login) backend endpoint to fetch an invoice for customer viewing using a shareable access mechanism (e.g., invoiceId plus a secret access code/token returned at creation time).",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "Customer ko bil Banakar deta paye Aisa ek feature add karo"
-        ]
-      },
-      "acceptanceCriteria": [
-        "A public endpoint exists that returns invoice details only when provided valid share parameters (e.g., invoiceId + accessCode).",
-        "Invalid or missing share parameters do not leak invoice data.",
-        "The access mechanism returned to admin at invoice creation time can be copied/shared with a customer."
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Add an admin UI flow on the existing Admin Bookings page to generate an invoice for a selected booking, including adding/editing line items and producing a shareable invoice link.",
+      "text": "Create a React hook useCustomerBookings that fetches all bookings for a given phone number using React Query",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "Customer ko bil Banakar deta paye Aisa ek feature add karo"
+          "msg-user-previous-1",
+          "msg-user-current"
         ]
       },
       "acceptanceCriteria": [
-        "From the booking details dialog on /admin/bookings, admin can open an invoice creation UI for that booking.",
-        "Admin can add one or more line items (description, quantity, unit price) and optional notes/discount/tax; totals are shown before saving.",
-        "On successful creation, the UI shows the created invoice reference and a shareable URL (including required token/code) with a copy-to-clipboard action.",
-        "UI uses existing authentication pattern (AdminGate) and does not expose admin actions to non-admin users."
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Add a customer-facing invoice view page that renders a printable bill in English (receipt/invoice layout) and supports browser printing.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ],
-        "quotes": [
-          "Customer ko bil Banakar deta paye Aisa ek feature add karo"
-        ]
-      },
-      "acceptanceCriteria": [
-        "A new route exists for invoice viewing (e.g., /invoice/:invoiceId) that reads required share parameters (e.g., access code) from the URL.",
-        "The page loads invoice data from the public invoice endpoint and shows a clear error state if invalid/expired.",
-        "The invoice view includes: shop header, invoice number, date, customer details, itemized table, subtotal/discount/tax/total, and notes if present, all in English.",
-        "A Print button triggers window.print(), and the page has print-friendly styling (hides navigation/controls when printing)."
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "Establish and apply a cohesive visual theme for the new invoice experiences that matches the existing amber/orange brand but feels like a clean paper receipt (warm neutral background, strong typographic hierarchy, subtle borders).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-1"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Invoice creation and invoice viewing screens consistently apply the receipt-like theme (spacing, borders, typography, and muted neutrals) while staying compatible with light/dark mode.",
-        "No user-facing text is introduced in any language other than English."
+        "Hook accepts phone number as parameter",
+        "Returns loading, error, and data states",
+        "Integrates with existing backend actor pattern",
+        "Uses React Query for caching and state management"
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor in backend/main.mo.",
-    "Do not edit files under frontend/src/components/ui (compose them instead).",
-    "Do not edit immutable hook/bootstrap files listed in SYSTEM_CONTEXT (e.g., frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/main.tsx)."
+    "Maintain the existing single-actor backend architecture",
+    "Do not modify Internet Identity integration or authentication hooks",
+    "Keep the existing booking data structure intact",
+    "Preserve the current PublicBookingsPage search functionality"
   ],
   "nonGoals": [
-    "Generating or emailing PDF invoices via third-party services.",
-    "Integrating external databases or payment gateways for invoice settlement.",
-    "Customer authentication beyond the existing Internet Identity setup (public invoice viewing should not require login)."
+    "Adding pagination for booking history",
+    "Filtering or sorting options for previous bookings",
+    "Editing or canceling previous bookings",
+    "Admin-specific booking history views"
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [
-      "Use English for all user-facing UI text."
-    ],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

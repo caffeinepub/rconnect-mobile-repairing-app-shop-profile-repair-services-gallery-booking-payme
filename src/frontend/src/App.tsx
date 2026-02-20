@@ -5,12 +5,10 @@ import ShopPage from './pages/ShopPage';
 import ServicesPage from './pages/ServicesPage';
 import GalleryPage from './pages/GalleryPage';
 import BookingPage from './pages/BookingPage';
-import PaymentsPage from './pages/PaymentsPage';
 import ContactPage from './pages/ContactPage';
 import ReviewsPage from './pages/ReviewsPage';
 import PublicBookingsPage from './pages/PublicBookingsPage';
 import AdminBookingsPage from './pages/AdminBookingsPage';
-import InvoiceViewPage from './pages/InvoiceViewPage';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import AppErrorScreen from './components/system/AppErrorScreen';
@@ -73,12 +71,6 @@ const bookingRoute = createRoute({
   component: BookingPage,
 });
 
-const paymentsRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/payments',
-  component: PaymentsPage,
-});
-
 const contactRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/contact',
@@ -91,22 +83,16 @@ const reviewsRoute = createRoute({
   component: ReviewsPage,
 });
 
-const bookingsRoute = createRoute({
+const trackBookingsRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/bookings',
+  path: '/track',
   component: PublicBookingsPage,
 });
 
-const adminBookingsRoute = createRoute({
+const allBookingsRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/admin/bookings',
+  path: '/bookings',
   component: AdminBookingsPage,
-});
-
-const invoiceRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/invoice/$invoiceId',
-  component: InvoiceViewPage,
 });
 
 const routeTree = rootRoute.addChildren([
@@ -114,12 +100,10 @@ const routeTree = rootRoute.addChildren([
   servicesRoute,
   galleryRoute,
   bookingRoute,
-  paymentsRoute,
   contactRoute,
   reviewsRoute,
-  bookingsRoute,
-  adminBookingsRoute,
-  invoiceRoute,
+  trackBookingsRoute,
+  allBookingsRoute,
 ]);
 
 const router = createRouter({ 

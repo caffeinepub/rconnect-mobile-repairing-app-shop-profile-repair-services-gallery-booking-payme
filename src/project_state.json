@@ -7,26 +7,18 @@
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-add-an-admin-ui-flow-on-the-existing-admin-bookings-page-to-generate-an-invoice-for-a-selected-booking-including-adding-editing-line-items-and-producing-a-shareable-invoice-link",
-      "title": "Add an admin UI flow on the existing Admin Bookings page to generate an invoice for a selected booking, including adding/editing line items and producing a shareable invoice link.",
+      "id": "feature-update-publicbookingspage-to-display-all-previous-bookings-for-the-searched-phone-number-showing-each-booking-s-id-service-type-device-details-status-and-date-in-a-list-or-card-format",
+      "title": "Update PublicBookingsPage to display all previous bookings for the searched phone number, showing each booking's ID, service type, device details, status, and date in a list or card format",
       "reqIds": [
-        "REQ-4"
+        "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-a-customer-facing-invoice-view-page-that-renders-a-printable-bill-in-english-receipt-invoice-layout-and-supports-browser-printing",
-      "title": "Add a customer-facing invoice view page that renders a printable bill in English (receipt/invoice layout) and supports browser printing.",
+      "id": "feature-create-a-react-hook-usecustomerbookings-that-fetches-all-bookings-for-a-given-phone-number-using-react-query",
+      "title": "Create a React hook useCustomerBookings that fetches all bookings for a given phone number using React Query",
       "reqIds": [
-        "REQ-5"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-establish-and-apply-a-cohesive-visual-theme-for-the-new-invoice-experiences-that-matches-the-existing-amber-orange-brand-but-feels-like-a-clean-paper-receipt-warm-neutral-background-strong-typographic-hierarchy-subtle-borders",
-      "title": "Establish and apply a cohesive visual theme for the new invoice experiences that matches the existing amber/orange brand but feels like a clean paper receipt (warm neutral background, strong typographic hierarchy, subtle borders).",
-      "reqIds": [
-        "REQ-6"
+        "REQ-3"
       ],
       "version": 1
     }
@@ -34,36 +26,20 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Add a feature to create/generate a bill (invoice) for a customer",
+      "summary": "Show customer's previous bookings in the booking list",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Add backend invoice data structures and storage so the canister can create, persist, and fetch customer bills (invoices) linked to an existing booking.",
+      "summary": "Add a backend query function that retrieves all bookings for a specific phone number, returning the complete booking history for that customer",
       "reqIds": [
         "REQ-1"
       ],
       "status": "pending"
-    },
-    {
-      "id": "AR-3",
-      "summary": "Expose admin-protected backend endpoints to create an invoice for a booking and to list/get invoices for administration.",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-4",
-      "summary": "Expose a public (no-login) backend endpoint to fetch an invoice for customer viewing using a shareable access mechanism (e.g., invoiceId plus a secret access code/token returned at creation time).",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "status": "pending"
     }
   ],
-  "projectName": "Rconnect",
+  "projectName": "Rconnect Mobile Repair",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

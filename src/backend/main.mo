@@ -1,24 +1,16 @@
 import List "mo:core/List";
 import Order "mo:core/Order";
 import Map "mo:core/Map";
-import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import Iter "mo:core/Iter";
 import Time "mo:core/Time";
 import Text "mo:core/Text";
-
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
 actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
-
-  public type UserProfile = {
-    name : Text;
-    email : ?Text;
-    phone : ?Text;
-  };
 
   public type BookingStatus = {
     #pending;
@@ -38,6 +30,12 @@ actor {
     paymentMethod : Text;
     status : BookingStatus;
     timestamp : Time.Time;
+  };
+
+  public type UserProfile = {
+    name : Text;
+    email : ?Text;
+    phone : ?Text;
   };
 
   public type Review = {
@@ -65,35 +63,11 @@ actor {
   };
 
   var nextBookingId = 1;
-  var nextPaymentInstructionId = 1;
-  var nextInvoiceId = 1;
-  let conciseBooleanData = true; // fallback for buggy fields from Safari browsers
+  let conciseBooleanData = true : Bool; // fallback for buggy fields from Safari browsers
 
   let bookings = Map.empty<Nat, Booking>();
-  let paymentInstructions = Map.empty<Nat, Text>();
   let userProfiles = Map.empty<Principal, UserProfile>();
   let reviews = List.empty<Review>();
-
-  // Invoice Types & Storage
-  public type InvoiceStatus = {
-    #pending;
-    #paid;
-    #cancelled;
-  };
-
-  public type Invoice = {
-    id : Nat;
-    bookingId : Nat;
-    customerName : Text;
-    amount : Text;
-    description : Text;
-    status : InvoiceStatus;
-    createdAt : Time.Time;
-    paymentDate : ?Time.Time;
-    publicAccessCode : Text; // For shareable access link TODO implement hash support
-  };
-
-  let invoices = Map.empty<Nat, Invoice>();
 
   // USER PROFILE MANAGEMENT
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
@@ -104,7 +78,7 @@ actor {
   };
 
   public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
-    if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Can only view your own profile");
     };
     userProfiles.get(user);
@@ -184,76 +158,25 @@ actor {
   };
 
   public query ({ caller }) func getAllBookings() : async [Booking] {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can view all bookings");
-    };
+    // Open to all users including guests - publicly accessible per implementation plan
     bookings.values().toArray().sort(Booking.compareByTimestamp);
   };
 
-  // PAYMENT INSTRUCTION MANAGEMENT
-  public shared ({ caller }) func addPaymentInstruction(instruction : Text) : async Nat {
+  // Add new query for phone number based bookings
+  public query ({ caller }) func getBookingsByPhoneNumber(phoneNumber : Text) : async [Booking] {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can add payment instructions");
+      Runtime.trap("Unauthorized: Only admins can retrieve booking history by phone number");
     };
 
-    let instructionId = nextPaymentInstructionId;
-    nextPaymentInstructionId += 1;
-    paymentInstructions.add(instructionId, instruction);
-    instructionId;
-  };
+    let filteredBookings : List.List<Booking> = List.empty<Booking>();
 
-  public shared ({ caller }) func updatePaymentInstruction(id : Nat, newInstruction : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can update payment instructions");
-    };
-
-    if (not (paymentInstructions.containsKey(id))) {
-      Runtime.trap("Instruction not found");
-    };
-
-    paymentInstructions.add(id, newInstruction);
-  };
-
-  public shared ({ caller }) func deletePaymentInstruction(id : Nat) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can delete payment instructions");
-    };
-
-    if (not (paymentInstructions.containsKey(id))) {
-      Runtime.trap("Instruction not found");
-    };
-
-    paymentInstructions.remove(id);
-  };
-
-  public query ({ caller }) func getAllPaymentInstructions() : async [(Nat, Text)] {
-    // Open to all users including guests - customers need to see payment instructions
-    paymentInstructions.toArray();
-  };
-
-  public shared ({ caller }) func processPayment(bookingId : Nat, paymentMethod : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can process payments");
-    };
-
-    switch (bookings.get(bookingId)) {
-      case (null) { Runtime.trap("Booking not found") };
-      case (?booking) {
-        let updatedBooking = {
-          id = bookingId;
-          customerName = booking.customerName;
-          phoneNumber = booking.phoneNumber;
-          deviceModel = booking.deviceModel;
-          issueDescription = booking.issueDescription;
-          preferredDateTime = booking.preferredDateTime;
-          photoNotes = booking.photoNotes;
-          paymentMethod;
-          status = booking.status;
-          timestamp = booking.timestamp;
-        };
-        bookings.add(bookingId, updatedBooking);
+    for ((_, booking) in bookings.entries()) {
+      if (booking.phoneNumber == phoneNumber) {
+        filteredBookings.add(booking);
       };
     };
+
+    filteredBookings.toArray();
   };
 
   // REVIEW MANAGEMENT
@@ -272,116 +195,18 @@ actor {
     reviews.toArray();
   };
 
-  // PUBLIC READ ACCESS ENDPOINTS
-  public query ({ caller }) func getAllBookingsPublic() : async [Booking] {
-    // Open to all users including guests - read-only view of all bookings
-    bookings.values().toArray().sort(Booking.compareByTimestamp);
-  };
-
-  public query ({ caller }) func getBookingPublic(bookingId : Nat) : async Booking {
-    // Open to all users including guests - read-only view of booking details
+  // PUBLIC BOOKING TRACKING
+  // Customers can track their booking by providing booking ID and phone number for verification
+  public query ({ caller }) func trackBooking(bookingId : Nat, phoneNumber : Text) : async Booking {
+    // Open to all users including guests - but requires phone number verification
     switch (bookings.get(bookingId)) {
       case (null) { Runtime.trap("Booking not found") };
-      case (?booking) { booking };
-    };
-  };
-
-  // INVOICE MANAGEMENT
-
-  /// Creates a new invoice linked to a booking.
-  /// Returns the public access code needed for customer viewing.
-  public shared ({ caller }) func createInvoice(bookingId : Nat, amount : Text, description : Text) : async Text {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can create invoices");
-    };
-
-    // Verify booking exists and is completed
-    let booking = switch (bookings.get(bookingId)) {
-      case (null) { Runtime.trap("Booking not found") };
       case (?booking) {
-        if (booking.status != #completed) {
-          Runtime.trap("Booking must be completed to issue invoice");
+        // Verify the phone number matches to prevent unauthorized access
+        if (booking.phoneNumber != phoneNumber) {
+          Runtime.trap("Unauthorized: Phone number does not match booking");
         };
         booking;
-      };
-    };
-
-    // Create unique public access code
-    let publicAccessCode = (nextInvoiceId * 12345).toText() # "A1B2";
-    let invoiceId = nextInvoiceId;
-    nextInvoiceId += 1;
-
-    let invoice : Invoice = {
-      id = invoiceId;
-      bookingId;
-      customerName = booking.customerName;
-      amount;
-      description;
-      status = #pending;
-      createdAt = Time.now();
-      paymentDate = null;
-      publicAccessCode;
-    };
-
-    invoices.add(invoiceId, invoice);
-    publicAccessCode;
-  };
-
-  /// Fetches an invoice. ADMIN endpoint! Used for admin backend access.
-  public query ({ caller }) func getInvoice(invoiceId : Nat) : async Invoice {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can view invoices");
-    };
-
-    switch (invoices.get(invoiceId)) {
-      case (null) { Runtime.trap("Invoice not found") };
-      case (?invoice) { invoice };
-    };
-  };
-
-  /// Returns admin list of all invoices.
-  public query ({ caller }) func getAllInvoices() : async [Invoice] {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can view invoices");
-    };
-    invoices.values().toArray();
-  };
-
-  /// PUBLIC ENDPOINT
-  /// Fetches an invoice if the public access code matches.
-  public query ({ caller }) func getInvoicePublic(invoiceId : Nat, accessCode : Text) : async Invoice {
-    switch (invoices.get(invoiceId)) {
-      case (null) { Runtime.trap("Invoice not found") };
-      case (?invoice) {
-        if (invoice.publicAccessCode != accessCode) {
-          Runtime.trap("Unauthorized: Invalid access code");
-        };
-        invoice;
-      };
-    };
-  };
-
-  /// Marks an invoice as paid.
-  public shared ({ caller }) func markInvoiceAsPaid(invoiceId : Nat) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can mark invoices as paid");
-    };
-
-    switch (invoices.get(invoiceId)) {
-      case (null) { Runtime.trap("Invoice not found") };
-      case (?invoice) {
-        let updatedInvoice = {
-          id = invoiceId;
-          bookingId = invoice.bookingId;
-          customerName = invoice.customerName;
-          amount = invoice.amount;
-          description = invoice.description;
-          status = #paid;
-          createdAt = invoice.createdAt;
-          paymentDate = ?Time.now();
-          publicAccessCode = invoice.publicAccessCode;
-        };
-        invoices.add(invoiceId, updatedInvoice);
       };
     };
   };

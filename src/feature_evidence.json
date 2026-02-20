@@ -2,14 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-an-admin-ui-flow-on-the-existing-admin-bookings-page-to-generate-an-invoice-for-a-selected-booking-including-adding-editing-line-items-and-producing-a-shareable-invoice-link",
-      "featureTitle": "Add an admin UI flow on the existing Admin Bookings page to generate an invoice for a selected booking, including adding/editing line items and producing a shareable invoice link.",
+      "featureId": "feature-update-publicbookingspage-to-display-all-previous-bookings-for-the-searched-phone-number-showing-each-booking-s-id-service-type-device-details-status-and-date-in-a-list-or-card-format",
+      "featureTitle": "Update PublicBookingsPage to display all previous bookings for the searched phone number, showing each booking's ID, service type, device details, status, and date in a list or card format",
       "files": [
-        "frontend/src/components/invoice/InvoiceComposerDialog.tsx",
-        "frontend/src/components/invoice/LineItemsEditor.tsx",
-        "frontend/src/components/invoice/invoiceMath.ts",
-        "frontend/src/hooks/useInvoices.ts",
-        "frontend/src/pages/AdminBookingsPage.tsx"
+        "frontend/src/pages/PublicBookingsPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -20,21 +16,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-4"
+        "REQ-2"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-a-customer-facing-invoice-view-page-that-renders-a-printable-bill-in-english-receipt-invoice-layout-and-supports-browser-printing",
-      "featureTitle": "Add a customer-facing invoice view page that renders a printable bill in English (receipt/invoice layout) and supports browser printing.",
+      "featureId": "feature-create-a-react-hook-usecustomerbookings-that-fetches-all-bookings-for-a-given-phone-number-using-react-query",
+      "featureTitle": "Create a React hook useCustomerBookings that fetches all bookings for a given phone number using React Query",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/invoice/InvoiceReceipt.tsx",
-        "frontend/src/components/layout/Footer.tsx",
-        "frontend/src/components/layout/Header.tsx",
-        "frontend/src/hooks/useInvoices.ts",
-        "frontend/src/index.css",
-        "frontend/src/pages/InvoiceViewPage.tsx"
+        "frontend/src/hooks/useBookings.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -45,30 +35,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-5"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-establish-and-apply-a-cohesive-visual-theme-for-the-new-invoice-experiences-that-matches-the-existing-amber-orange-brand-but-feels-like-a-clean-paper-receipt-warm-neutral-background-strong-typographic-hierarchy-subtle-borders",
-      "featureTitle": "Establish and apply a cohesive visual theme for the new invoice experiences that matches the existing amber/orange brand but feels like a clean paper receipt (warm neutral background, strong typographic hierarchy, subtle borders).",
-      "files": [
-        "frontend/src/components/invoice/InvoiceComposerDialog.tsx",
-        "frontend/src/components/invoice/InvoiceReceipt.tsx",
-        "frontend/src/components/invoice/receiptTheme.ts",
-        "frontend/src/index.css",
-        "frontend/src/pages/InvoiceViewPage.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-6"
+        "REQ-3"
       ],
       "confidence": "high"
     }

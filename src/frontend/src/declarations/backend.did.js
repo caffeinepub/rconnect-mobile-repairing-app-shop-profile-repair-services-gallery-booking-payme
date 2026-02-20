@@ -41,22 +41,6 @@ export const Booking = IDL.Record({
   'phoneNumber' : IDL.Text,
   'deviceModel' : IDL.Text,
 });
-export const InvoiceStatus = IDL.Variant({
-  'cancelled' : IDL.Null,
-  'pending' : IDL.Null,
-  'paid' : IDL.Null,
-});
-export const Invoice = IDL.Record({
-  'id' : IDL.Nat,
-  'customerName' : IDL.Text,
-  'status' : InvoiceStatus,
-  'bookingId' : IDL.Nat,
-  'publicAccessCode' : IDL.Text,
-  'createdAt' : Time,
-  'description' : IDL.Text,
-  'paymentDate' : IDL.Opt(Time),
-  'amount' : IDL.Text,
-});
 export const Review = IDL.Record({
   'timeStamp' : Time,
   'reviewText' : IDL.Text,
@@ -70,39 +54,29 @@ export const UserProfile = IDL.Record({
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-  'addPaymentInstruction' : IDL.Func([IDL.Text], [IDL.Nat], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'createBooking' : IDL.Func([MakeBookingRequest], [IDL.Nat], []),
-  'createInvoice' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text], [IDL.Text], []),
-  'deletePaymentInstruction' : IDL.Func([IDL.Nat], [], []),
   'getAllBookingEntries' : IDL.Func([], [IDL.Vec(Booking)], ['query']),
   'getAllBookings' : IDL.Func([], [IDL.Vec(Booking)], ['query']),
-  'getAllBookingsPublic' : IDL.Func([], [IDL.Vec(Booking)], ['query']),
-  'getAllInvoices' : IDL.Func([], [IDL.Vec(Invoice)], ['query']),
-  'getAllPaymentInstructions' : IDL.Func(
-      [],
-      [IDL.Vec(IDL.Tuple(IDL.Nat, IDL.Text))],
-      ['query'],
-    ),
   'getAllReviews' : IDL.Func([], [IDL.Vec(Review)], ['query']),
   'getBooking' : IDL.Func([IDL.Nat], [Booking], ['query']),
-  'getBookingPublic' : IDL.Func([IDL.Nat], [Booking], ['query']),
+  'getBookingsByPhoneNumber' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(Booking)],
+      ['query'],
+    ),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-  'getInvoice' : IDL.Func([IDL.Nat], [Invoice], ['query']),
-  'getInvoicePublic' : IDL.Func([IDL.Nat, IDL.Text], [Invoice], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-  'markInvoiceAsPaid' : IDL.Func([IDL.Nat], [], []),
-  'processPayment' : IDL.Func([IDL.Nat, IDL.Text], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'submitReview' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'trackBooking' : IDL.Func([IDL.Nat, IDL.Text], [Booking], ['query']),
   'updateBookingStatus' : IDL.Func([IDL.Nat, BookingStatus], [], []),
-  'updatePaymentInstruction' : IDL.Func([IDL.Nat, IDL.Text], [], []),
 });
 
 export const idlInitArgs = [];
@@ -141,22 +115,6 @@ export const idlFactory = ({ IDL }) => {
     'phoneNumber' : IDL.Text,
     'deviceModel' : IDL.Text,
   });
-  const InvoiceStatus = IDL.Variant({
-    'cancelled' : IDL.Null,
-    'pending' : IDL.Null,
-    'paid' : IDL.Null,
-  });
-  const Invoice = IDL.Record({
-    'id' : IDL.Nat,
-    'customerName' : IDL.Text,
-    'status' : InvoiceStatus,
-    'bookingId' : IDL.Nat,
-    'publicAccessCode' : IDL.Text,
-    'createdAt' : Time,
-    'description' : IDL.Text,
-    'paymentDate' : IDL.Opt(Time),
-    'amount' : IDL.Text,
-  });
   const Review = IDL.Record({
     'timeStamp' : Time,
     'reviewText' : IDL.Text,
@@ -170,39 +128,29 @@ export const idlFactory = ({ IDL }) => {
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-    'addPaymentInstruction' : IDL.Func([IDL.Text], [IDL.Nat], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'createBooking' : IDL.Func([MakeBookingRequest], [IDL.Nat], []),
-    'createInvoice' : IDL.Func([IDL.Nat, IDL.Text, IDL.Text], [IDL.Text], []),
-    'deletePaymentInstruction' : IDL.Func([IDL.Nat], [], []),
     'getAllBookingEntries' : IDL.Func([], [IDL.Vec(Booking)], ['query']),
     'getAllBookings' : IDL.Func([], [IDL.Vec(Booking)], ['query']),
-    'getAllBookingsPublic' : IDL.Func([], [IDL.Vec(Booking)], ['query']),
-    'getAllInvoices' : IDL.Func([], [IDL.Vec(Invoice)], ['query']),
-    'getAllPaymentInstructions' : IDL.Func(
-        [],
-        [IDL.Vec(IDL.Tuple(IDL.Nat, IDL.Text))],
-        ['query'],
-      ),
     'getAllReviews' : IDL.Func([], [IDL.Vec(Review)], ['query']),
     'getBooking' : IDL.Func([IDL.Nat], [Booking], ['query']),
-    'getBookingPublic' : IDL.Func([IDL.Nat], [Booking], ['query']),
+    'getBookingsByPhoneNumber' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(Booking)],
+        ['query'],
+      ),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-    'getInvoice' : IDL.Func([IDL.Nat], [Invoice], ['query']),
-    'getInvoicePublic' : IDL.Func([IDL.Nat, IDL.Text], [Invoice], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-    'markInvoiceAsPaid' : IDL.Func([IDL.Nat], [], []),
-    'processPayment' : IDL.Func([IDL.Nat, IDL.Text], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'submitReview' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'trackBooking' : IDL.Func([IDL.Nat, IDL.Text], [Booking], ['query']),
     'updateBookingStatus' : IDL.Func([IDL.Nat, BookingStatus], [], []),
-    'updatePaymentInstruction' : IDL.Func([IDL.Nat, IDL.Text], [], []),
   });
 };
 

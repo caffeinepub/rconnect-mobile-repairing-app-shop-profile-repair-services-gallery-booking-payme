@@ -1,20 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { Booking, MakeBookingRequest, BookingStatus } from '../backend';
-
-// Admin hooks (require authentication)
-export function useGetAllBookings() {
-  const { actor, isFetching } = useActor();
-
-  return useQuery<Booking[]>({
-    queryKey: ['bookings', 'admin'],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.getAllBookings();
-    },
-    enabled: !!actor && !isFetching,
-  });
-}
+import { useInternetIdentity } from './useInternetIdentity';
+import type { MakeBookingRequest, Booking, BookingStatus } from '@/backend';
 
 export function useCreateBooking() {
   const { actor } = useActor();
@@ -26,58 +13,71 @@ export function useCreateBooking() {
       return actor.createBooking(request);
     },
     onSuccess: () => {
-      // Invalidate both admin and public booking caches
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
-    },
-    onError: (error) => {
-      console.error('Create booking mutation error:', error);
-      // Error is surfaced to UI via mutation.isError
     },
   });
 }
 
+export function useGetAllBookings() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<Booking[]>({
+    queryKey: ['bookings', 'all'],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.getAllBookings();
+    },
+    enabled: !!actor && !actorFetching,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  });
+}
+
 export function useUpdateBookingStatus() {
-  const { actor } = useActor();
+  const { actor, isFetching: actorFetching } = useActor();
+  const { identity } = useInternetIdentity();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ bookingId, status }: { bookingId: bigint; status: BookingStatus }) => {
       if (!actor) throw new Error('Actor not available');
+      if (!identity) throw new Error('Authentication required');
       return actor.updateBookingStatus(bookingId, status);
     },
     onSuccess: () => {
-      // Invalidate both admin and public booking caches
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
     },
-    onError: (error) => {
-      console.error('Update booking status mutation error:', error);
+  });
+}
+
+export function useTrackBooking() {
+  const { actor } = useActor();
+
+  return useMutation({
+    mutationFn: async ({ bookingId, phoneNumber }: { bookingId: bigint; phoneNumber: string }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.trackBooking(bookingId, phoneNumber);
     },
   });
 }
 
-// Public hooks (no authentication required)
-export function useGetAllBookingsPublic() {
-  const { actor, isFetching } = useActor();
+export function useCustomerBookings(phoneNumber: string | null) {
+  const { actor, isFetching: actorFetching } = useActor();
 
   return useQuery<Booking[]>({
-    queryKey: ['bookings', 'public'],
+    queryKey: ['customerBookings', phoneNumber],
     queryFn: async () => {
-      if (!actor) return [];
-      return actor.getAllBookingsPublic();
+      if (!actor) throw new Error('Actor not available');
+      if (!phoneNumber) throw new Error('Phone number required');
+      const bookings = await actor.getBookingsByPhoneNumber(phoneNumber);
+      // Sort by timestamp descending (newest first)
+      return bookings.sort((a, b) => {
+        if (a.timestamp > b.timestamp) return -1;
+        if (a.timestamp < b.timestamp) return 1;
+        return 0;
+      });
     },
-    enabled: !!actor && !isFetching,
-  });
-}
-
-export function useGetBookingPublic(bookingId: bigint | null) {
-  const { actor, isFetching } = useActor();
-
-  return useQuery<Booking | null>({
-    queryKey: ['bookings', 'public', bookingId?.toString()],
-    queryFn: async () => {
-      if (!actor || !bookingId) return null;
-      return actor.getBookingPublic(bookingId);
-    },
-    enabled: !!actor && !isFetching && bookingId !== null,
+    enabled: !!actor && !actorFetching && !!phoneNumber,
+    retry: 1,
   });
 }

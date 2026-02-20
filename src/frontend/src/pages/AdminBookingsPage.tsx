@@ -1,236 +1,187 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Calendar, Phone, Smartphone, Clock, User, FileText, CreditCard, Loader2, Receipt } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Calendar, Phone, Smartphone, AlertCircle } from 'lucide-react';
 import { useGetAllBookings, useUpdateBookingStatus } from '@/hooks/useBookings';
 import { formatDateTime } from '@/utils/time';
 import type { Booking, BookingStatus } from '@/backend';
-import AdminGate from '@/components/auth/AdminGate';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import InvoiceComposerDialog from '@/components/invoice/InvoiceComposerDialog';
+import BookingDetailDialog from '@/components/booking/BookingDetailDialog';
 
-function BookingsContent() {
+export default function AdminBookingsPage() {
   const { data: bookings, isLoading, error } = useGetAllBookings();
   const updateStatus = useUpdateBookingStatus();
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-  const [newStatus, setNewStatus] = useState<BookingStatus | null>(null);
-  const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string>('all');
 
-  const getStatusColor = (status: BookingStatus) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-400';
+        return 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20';
       case 'confirmed':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-400';
+        return 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20';
       case 'completed':
-        return 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-400';
+        return 'bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20';
       case 'cancelled':
-        return 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-400';
+        return 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-950 dark:text-gray-400';
+        return 'bg-gray-500/10 text-gray-700 dark:text-gray-400 border-gray-500/20';
     }
   };
 
-  const handleStatusUpdate = async () => {
-    if (!selectedBooking || !newStatus) return;
+  const getStatusLabel = (status: string) => {
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  };
 
+  const handleStatusUpdate = async (bookingId: bigint, newStatus: BookingStatus) => {
     try {
-      await updateStatus.mutateAsync({
-        bookingId: selectedBooking.id,
-        status: newStatus,
-      });
-      setSelectedBooking(null);
-      setNewStatus(null);
+      await updateStatus.mutateAsync({ bookingId, status: newStatus });
     } catch (error) {
-      console.error('Failed to update status:', error);
+      console.error('Failed to update booking status:', error);
     }
   };
 
-  const handleGenerateInvoice = () => {
-    setInvoiceDialogOpen(true);
+  // Filter bookings based on selected status
+  const filteredBookings = bookings?.filter((booking) => {
+    if (statusFilter === 'all') return true;
+    return booking.status === statusFilter;
+  }) || [];
+
+  // Count bookings by status
+  const statusCounts = {
+    all: bookings?.length || 0,
+    pending: bookings?.filter(b => b.status === 'pending').length || 0,
+    confirmed: bookings?.filter(b => b.status === 'confirmed').length || 0,
+    completed: bookings?.filter(b => b.status === 'completed').length || 0,
+    cancelled: bookings?.filter(b => b.status === 'cancelled').length || 0,
   };
-
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        {[1, 2, 3].map((i) => (
-          <Card key={i}>
-            <CardContent className="p-6">
-              <div className="space-y-3">
-                <Skeleton className="h-6 w-1/3" />
-                <Skeleton className="h-4 w-2/3" />
-                <Skeleton className="h-4 w-1/2" />
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <Alert variant="destructive">
-        <AlertDescription>Failed to load bookings. Please try again.</AlertDescription>
-      </Alert>
-    );
-  }
-
-  if (!bookings || bookings.length === 0) {
-    return (
-      <Card>
-        <CardContent className="p-12 text-center">
-          <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No Bookings Yet</h3>
-          <p className="text-sm text-muted-foreground">
-            Bookings will appear here once customers submit repair requests
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
-    <>
-      <div className="space-y-4">
-        {bookings.map((booking) => (
-          <Card
-            key={booking.id.toString()}
-            className="cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => setSelectedBooking(booking)}
-          >
-            <CardContent className="p-6">
-              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                <div className="space-y-3 flex-1">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <h3 className="font-semibold text-lg flex items-center gap-2">
-                        <User className="w-4 h-4 text-muted-foreground" />
-                        {booking.customerName}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">Booking #{booking.id.toString()}</p>
-                    </div>
-                    <Badge className={getStatusColor(booking.status)}>
-                      {booking.status}
-                    </Badge>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Phone className="w-4 h-4" />
-                      {booking.phoneNumber}
-                    </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Smartphone className="w-4 h-4" />
-                      {booking.deviceModel}
-                    </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Calendar className="w-4 h-4" />
-                      {formatDateTime(booking.preferredDateTime)}
-                    </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <CreditCard className="w-4 h-4" />
-                      {booking.paymentMethod}
-                    </div>
-                  </div>
-                  <p className="text-sm line-clamp-2">{booking.issueDescription}</p>
-                </div>
-              </div>
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+      <div className="container mx-auto px-4 py-12">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold mb-2">All Bookings</h1>
+          <p className="text-muted-foreground">View all repair bookings</p>
+        </div>
+
+        {/* Status Filter Tabs */}
+        <Tabs value={statusFilter} onValueChange={setStatusFilter} className="mb-6">
+          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
+            <TabsTrigger value="all">
+              All ({statusCounts.all})
+            </TabsTrigger>
+            <TabsTrigger value="pending">
+              Pending ({statusCounts.pending})
+            </TabsTrigger>
+            <TabsTrigger value="confirmed">
+              Confirmed ({statusCounts.confirmed})
+            </TabsTrigger>
+            <TabsTrigger value="completed">
+              Completed ({statusCounts.completed})
+            </TabsTrigger>
+            <TabsTrigger value="cancelled">
+              Cancelled ({statusCounts.cancelled})
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+
+        {/* Loading State */}
+        {isLoading && (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <Card key={i}>
+                <CardHeader>
+                  <Skeleton className="h-6 w-3/4 mb-2" />
+                  <Skeleton className="h-4 w-1/2" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-4 w-full mb-2" />
+                  <Skeleton className="h-4 w-5/6" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Failed to load bookings. Please try again later.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Empty State */}
+        {!isLoading && !error && filteredBookings.length === 0 && (
+          <Card className="text-center py-12">
+            <CardContent>
+              <Calendar className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+              <h3 className="text-xl font-semibold mb-2">
+                {statusFilter === 'all' ? 'No Bookings Yet' : `No ${getStatusLabel(statusFilter)} Bookings`}
+              </h3>
+              <p className="text-muted-foreground">
+                {statusFilter === 'all' 
+                  ? 'There are no bookings to display at the moment.'
+                  : `There are no ${statusFilter} bookings at the moment.`
+                }
+              </p>
             </CardContent>
           </Card>
-        ))}
-      </div>
+        )}
 
-      {/* Detail Dialog */}
-      <Dialog open={!!selectedBooking} onOpenChange={() => setSelectedBooking(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          {selectedBooking && (
-            <>
-              <DialogHeader>
-                <DialogTitle className="text-2xl">Booking Details</DialogTitle>
-                <DialogDescription>Booking #{selectedBooking.id.toString()}</DialogDescription>
-              </DialogHeader>
-              <div className="space-y-6">
-                {/* Status */}
-                <div className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
-                  <span className="font-medium">Status</span>
-                  <Badge className={getStatusColor(selectedBooking.status)}>
-                    {selectedBooking.status}
-                  </Badge>
-                </div>
-
-                {/* Customer Info */}
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-lg">Customer Information</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Name</p>
-                      <p className="font-medium">{selectedBooking.customerName}</p>
+        {/* Bookings Grid */}
+        {!isLoading && !error && filteredBookings.length > 0 && (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredBookings.map((booking) => (
+              <Card
+                key={booking.id.toString()}
+                className="cursor-pointer hover:shadow-lg transition-shadow"
+                onClick={() => setSelectedBooking(booking)}
+              >
+                <CardHeader>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1">
+                      <CardTitle className="text-lg">{booking.customerName}</CardTitle>
+                      <CardDescription className="mt-1">
+                        Booking #{booking.id.toString()}
+                      </CardDescription>
                     </div>
-                    <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Phone</p>
-                      <a href={`tel:${selectedBooking.phoneNumber}`} className="font-medium hover:text-amber-600">
-                        {selectedBooking.phoneNumber}
-                      </a>
-                    </div>
+                    <Badge className={getStatusColor(booking.status)}>
+                      {getStatusLabel(booking.status)}
+                    </Badge>
                   </div>
-                </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Smartphone className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">{booking.deviceModel}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Phone className="w-4 h-4 flex-shrink-0" />
+                    <span>{booking.phoneNumber}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Calendar className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">{formatDateTime(booking.preferredDateTime)}</span>
+                  </div>
+                  <p className="text-sm line-clamp-2 text-muted-foreground">
+                    {booking.issueDescription}
+                  </p>
 
-                {/* Device Info */}
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-lg">Device Information</h3>
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Model Name</p>
-                    <p className="font-medium">{selectedBooking.deviceModel}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Issue Description</p>
-                    <p className="text-sm leading-relaxed">{selectedBooking.issueDescription}</p>
-                  </div>
-                  {selectedBooking.photoNotes && (
-                    <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Additional Notes</p>
-                      <p className="text-sm leading-relaxed">{selectedBooking.photoNotes}</p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Appointment Info */}
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-lg">Appointment Details</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Preferred Date & Time</p>
-                      <p className="font-medium">{formatDateTime(selectedBooking.preferredDateTime)}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Booking Created</p>
-                      <p className="font-medium">{formatDateTime(selectedBooking.timestamp)}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Payment Info */}
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-lg">Payment Information</h3>
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Payment Method</p>
-                    <p className="font-medium capitalize">{selectedBooking.paymentMethod}</p>
-                  </div>
-                </div>
-
-                {/* Update Status */}
-                <div className="space-y-3 pt-4 border-t">
-                  <h3 className="font-semibold text-lg">Update Status</h3>
-                  <div className="flex gap-3">
+                  {/* Status Update Dropdown */}
+                  <div className="pt-2" onClick={(e) => e.stopPropagation()}>
                     <Select
-                      value={newStatus || selectedBooking.status}
-                      onValueChange={(value) => setNewStatus(value as BookingStatus)}
+                      value={booking.status}
+                      onValueChange={(value) => handleStatusUpdate(booking.id, value as BookingStatus)}
+                      disabled={updateStatus.isPending}
                     >
-                      <SelectTrigger className="flex-1">
+                      <SelectTrigger className="w-full">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -240,75 +191,23 @@ function BookingsContent() {
                         <SelectItem value="cancelled">Cancelled</SelectItem>
                       </SelectContent>
                     </Select>
-                    <Button
-                      onClick={handleStatusUpdate}
-                      disabled={!newStatus || newStatus === selectedBooking.status || updateStatus.isPending}
-                    >
-                      {updateStatus.isPending ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Updating...
-                        </>
-                      ) : (
-                        'Update'
-                      )}
-                    </Button>
                   </div>
-                </div>
-
-                {/* Generate Invoice */}
-                <div className="space-y-3 pt-4 border-t">
-                  <h3 className="font-semibold text-lg">Invoice</h3>
-                  <Button
-                    onClick={handleGenerateInvoice}
-                    variant="outline"
-                    className="w-full gap-2"
-                    disabled={selectedBooking.status !== 'completed'}
-                  >
-                    <Receipt className="w-4 h-4" />
-                    Generate Invoice
-                  </Button>
-                  {selectedBooking.status !== 'completed' && (
-                    <p className="text-xs text-muted-foreground">
-                      Invoice can only be generated for completed bookings
-                    </p>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Invoice Composer Dialog */}
-      <InvoiceComposerDialog
-        booking={selectedBooking}
-        open={invoiceDialogOpen}
-        onOpenChange={setInvoiceDialogOpen}
-      />
-    </>
-  );
-}
-
-export default function AdminBookingsPage() {
-  return (
-    <AdminGate>
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-        {/* Header */}
-        <section className="bg-gradient-to-r from-amber-500 to-orange-600 text-white py-16">
-          <div className="container mx-auto px-4">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Manage Bookings</h1>
-            <p className="text-lg opacity-90">View and manage all customer repair bookings</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        </section>
+        )}
 
-        {/* Bookings List */}
-        <section className="container mx-auto px-4 py-12">
-          <div className="max-w-4xl mx-auto">
-            <BookingsContent />
-          </div>
-        </section>
+        {/* Booking Detail Dialog */}
+        <BookingDetailDialog
+          booking={selectedBooking}
+          onClose={() => setSelectedBooking(null)}
+          getStatusColor={getStatusColor}
+          getStatusLabel={getStatusLabel}
+          onStatusUpdate={handleStatusUpdate}
+          isUpdating={updateStatus.isPending}
+        />
       </div>
-    </AdminGate>
+    </div>
   );
 }

@@ -14,7 +14,7 @@ export default function Header() {
     { to: '/services', label: 'Services' },
     { to: '/gallery', label: 'Gallery' },
     { to: '/booking', label: 'Book Now' },
-    { to: '/payments', label: 'Payments' },
+    { to: '/bookings', label: 'Bookings' },
     { to: '/reviews', label: 'Reviews' },
     { to: '/contact', label: 'Contact' },
   ];

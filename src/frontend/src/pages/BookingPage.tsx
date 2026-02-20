@@ -11,6 +11,7 @@ import { CheckCircle2, Loader2, Calendar } from 'lucide-react';
 import { useCreateBooking } from '@/hooks/useBookings';
 import { useInternetIdentity } from '@/hooks/useInternetIdentity';
 import { dateTimeToNanoseconds } from '@/utils/time';
+import { SERVICES_CATALOG } from '@/data/servicesCatalog';
 
 export default function BookingPage() {
   const navigate = useNavigate();
@@ -20,6 +21,8 @@ export default function BookingPage() {
   const [formData, setFormData] = useState({
     customerName: '',
     phoneNumber: '',
+    serviceCategory: '',
+    serviceId: '',
     deviceModel: '',
     issueDescription: '',
     preferredDate: '',
@@ -30,6 +33,10 @@ export default function BookingPage() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [bookingId, setBookingId] = useState<bigint | null>(null);
+
+  // Get available services based on selected category
+  const selectedCategory = SERVICES_CATALOG.find(cat => cat.id === formData.serviceCategory);
+  const availableServices = selectedCategory?.services || [];
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -42,6 +49,14 @@ export default function BookingPage() {
       newErrors.phoneNumber = 'Phone number is required';
     } else if (!/^\d{10}$/.test(formData.phoneNumber.replace(/\s/g, ''))) {
       newErrors.phoneNumber = 'Please enter a valid 10-digit phone number';
+    }
+
+    if (!formData.serviceCategory) {
+      newErrors.serviceCategory = 'Please select a service category';
+    }
+
+    if (!formData.serviceId) {
+      newErrors.serviceId = 'Please select a specific service';
     }
 
     if (!formData.deviceModel.trim()) {
@@ -78,11 +93,18 @@ export default function BookingPage() {
         formData.preferredTime
       );
 
+      // Find the selected service name
+      const selectedService = availableServices.find(s => s.id === formData.serviceId);
+      const serviceName = selectedService?.name || 'Service';
+
+      // Combine service info with issue description
+      const fullIssueDescription = `[${serviceName}] ${formData.issueDescription}`;
+
       const id = await createBooking.mutateAsync({
         customerName: formData.customerName,
         phoneNumber: formData.phoneNumber,
         deviceModel: formData.deviceModel,
-        issueDescription: formData.issueDescription,
+        issueDescription: fullIssueDescription,
         preferredDateTime,
         photoNotes: formData.photoNotes || undefined,
         paymentMethod: formData.paymentMethod,
@@ -96,7 +118,14 @@ export default function BookingPage() {
   };
 
   const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => {
+      const updated = { ...prev, [field]: value };
+      // Reset service selection when category changes
+      if (field === 'serviceCategory') {
+        updated.serviceId = '';
+      }
+      return updated;
+    });
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: '' }));
     }
@@ -134,6 +163,8 @@ export default function BookingPage() {
                     setFormData({
                       customerName: '',
                       phoneNumber: '',
+                      serviceCategory: '',
+                      serviceId: '',
                       deviceModel: '',
                       issueDescription: '',
                       preferredDate: '',
@@ -176,7 +207,7 @@ export default function BookingPage() {
                   <Calendar className="w-5 h-5 text-amber-600" />
                   <span className="text-sm font-medium">Shop Staff?</span>
                 </div>
-                <Button variant="outline" size="sm" onClick={() => navigate({ to: '/admin/bookings' })}>
+                <Button variant="outline" size="sm" onClick={() => navigate({ to: '/bookings' })}>
                   View All Bookings
                 </Button>
               </CardContent>
@@ -226,6 +257,57 @@ export default function BookingPage() {
                     <p className="text-sm text-destructive">{errors.phoneNumber}</p>
                   )}
                 </div>
+
+                {/* Service Category */}
+                <div className="space-y-2">
+                  <Label htmlFor="serviceCategory">
+                    Service Category <span className="text-destructive">*</span>
+                  </Label>
+                  <Select value={formData.serviceCategory} onValueChange={(value) => handleChange('serviceCategory', value)}>
+                    <SelectTrigger id="serviceCategory" className={errors.serviceCategory ? 'border-destructive' : ''}>
+                      <SelectValue placeholder="Select a service category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SERVICES_CATALOG.map((category) => (
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.serviceCategory && (
+                    <p className="text-sm text-destructive">{errors.serviceCategory}</p>
+                  )}
+                </div>
+
+                {/* Specific Service */}
+                {formData.serviceCategory && (
+                  <div className="space-y-2">
+                    <Label htmlFor="serviceId">
+                      Specific Service <span className="text-destructive">*</span>
+                    </Label>
+                    <Select value={formData.serviceId} onValueChange={(value) => handleChange('serviceId', value)}>
+                      <SelectTrigger id="serviceId" className={errors.serviceId ? 'border-destructive' : ''}>
+                        <SelectValue placeholder="Select a specific service" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableServices.map((service) => (
+                          <SelectItem key={service.id} value={service.id}>
+                            <div className="flex flex-col items-start">
+                              <span>{service.name}</span>
+                              {service.estimatedTime && (
+                                <span className="text-xs text-muted-foreground">Est. {service.estimatedTime}</span>
+                              )}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.serviceId && (
+                      <p className="text-sm text-destructive">{errors.serviceId}</p>
+                    )}
+                  </div>
+                )}
 
                 {/* Model Name */}
                 <div className="space-y-2">
