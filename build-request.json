@@ -1,0 +1,81 @@
+{
+  "kind": "build_request",
+  "title": "Display customer's previous bookings in the bookings list",
+  "projectName": "Rconnect Mobile Repair",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Add a backend query function that retrieves all bookings for a specific phone number, returning the complete booking history for that customer",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-user-previous-1",
+          "msg-user-current"
+        ],
+        "quotes": [
+          "Customer ka pahle wala booking Jo Kiya hua tha vah repeat lekar aao ismein",
+          "ha"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend function accepts a phone number as input",
+        "Returns all bookings matching that phone number",
+        "Bookings are sorted by creation date (newest first)"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Update PublicBookingsPage to display all previous bookings for the searched phone number, showing each booking's ID, service type, device details, status, and date in a list or card format",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-previous-1",
+          "msg-user-current"
+        ],
+        "quotes": [
+          "Customer ka pahle wala booking Jo Kiya hua tha vah repeat lekar aao ismein"
+        ]
+      },
+      "acceptanceCriteria": [
+        "When a user searches by booking ID and phone number, all bookings for that phone number are displayed",
+        "Each booking card shows booking ID, service category, device model, status, and booking date",
+        "The searched booking is highlighted or shown first",
+        "Previous bookings are clearly labeled or separated from the current search result"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Create a React hook useCustomerBookings that fetches all bookings for a given phone number using React Query",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-previous-1",
+          "msg-user-current"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Hook accepts phone number as parameter",
+        "Returns loading, error, and data states",
+        "Integrates with existing backend actor pattern",
+        "Uses React Query for caching and state management"
+      ]
+    }
+  ],
+  "constraints": [
+    "Maintain the existing single-actor backend architecture",
+    "Do not modify Internet Identity integration or authentication hooks",
+    "Keep the existing booking data structure intact",
+    "Preserve the current PublicBookingsPage search functionality"
+  ],
+  "nonGoals": [
+    "Adding pagination for booking history",
+    "Filtering or sorting options for previous bookings",
+    "Editing or canceling previous bookings",
+    "Admin-specific booking history views"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

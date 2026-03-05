@@ -1,0 +1,41 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Display customer's previous bookings in the bookings list",
+  "requirements": [
+    {
+      "id": "REQ-2",
+      "summary": "Update PublicBookingsPage to display all previous bookings for the searched phone number",
+      "acceptanceCriteria": [
+        "When a user searches by booking ID and phone number, all bookings for that phone number are displayed",
+        "Each booking card shows booking ID, service category, device model, status, and booking date",
+        "The searched booking is highlighted or shown first",
+        "Previous bookings are clearly labeled or separated from the current search result"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/PublicBookingsPage.tsx",
+          "operation": "modify",
+          "description": "Enhance the page to fetch and display all bookings for the searched phone number using the useCustomerBookings hook. When a booking is tracked successfully, call the new hook to retrieve the customer's booking history. Display the searched booking prominently at the top, followed by a section labeled 'Previous Bookings' showing all other bookings for that phone number. Each booking card should display booking ID, device model, issue description, status badge, and formatted timestamp. Ensure the searched booking is visually highlighted (e.g., with a border or background color). Handle loading and error states for the customer bookings query."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Create a React hook useCustomerBookings that fetches all bookings for a given phone number",
+      "acceptanceCriteria": [
+        "Hook accepts phone number as parameter",
+        "Returns loading, error, and data states",
+        "Integrates with existing backend actor pattern",
+        "Uses React Query for caching and state management"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useBookings.ts",
+          "operation": "modify",
+          "description": "Add a new useCustomerBookings hook that accepts a phone number parameter and uses React Query to fetch all bookings for that customer by calling actor.getBookingsByPhoneNumber(phoneNumber). The hook should return an object with isLoading, error, and data states, following the same pattern as existing hooks in the file. Enable the query only when actor is available and phoneNumber is provided. Use a queryKey like ['customerBookings', phoneNumber] for proper caching. Sort the returned bookings by timestamp in descending order (newest first) in the queryFn."
+        }
+      ]
+    }
+  ]
+}

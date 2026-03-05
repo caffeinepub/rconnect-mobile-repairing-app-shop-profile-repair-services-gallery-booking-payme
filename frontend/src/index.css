@@ -1,0 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Amber/Orange Theme - Light Mode */
+    --background: 98% 0.01 106;
+    --foreground: 20% 0.01 106;
+    --card: 100% 0 0;
+    --card-foreground: 20% 0.01 106;
+    --popover: 100% 0 0;
+    --popover-foreground: 20% 0.01 106;
+    --primary: 65% 0.19 55;
+    --primary-foreground: 98% 0.01 106;
+    --secondary: 96% 0.02 106;
+    --secondary-foreground: 20% 0.01 106;
+    --muted: 96% 0.02 106;
+    --muted-foreground: 50% 0.01 106;
+    --accent: 70% 0.15 45;
+    --accent-foreground: 20% 0.01 106;
+    --destructive: 55% 0.22 25;
+    --destructive-foreground: 98% 0.01 106;
+    --border: 90% 0.02 106;
+    --input: 90% 0.02 106;
+    --ring: 65% 0.19 55;
+    --chart-1: 65% 0.19 55;
+    --chart-2: 70% 0.15 45;
+    --chart-3: 75% 0.12 35;
+    --chart-4: 80% 0.09 25;
+    --chart-5: 85% 0.06 15;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Amber/Orange Theme - Dark Mode */
+    --background: 20% 0.01 106;
+    --foreground: 98% 0.01 106;
+    --card: 25% 0.01 106;
+    --card-foreground: 98% 0.01 106;
+    --popover: 25% 0.01 106;
+    --popover-foreground: 98% 0.01 106;
+    --primary: 70% 0.17 50;
+    --primary-foreground: 20% 0.01 106;
+    --secondary: 30% 0.02 106;
+    --secondary-foreground: 98% 0.01 106;
+    --muted: 30% 0.02 106;
+    --muted-foreground: 65% 0.01 106;
+    --accent: 75% 0.13 40;
+    --accent-foreground: 20% 0.01 106;
+    --destructive: 60% 0.20 25;
+    --destructive-foreground: 98% 0.01 106;
+    --border: 35% 0.02 106;
+    --input: 35% 0.02 106;
+    --ring: 70% 0.17 50;
+    --chart-1: 70% 0.17 50;
+    --chart-2: 75% 0.13 40;
+    --chart-3: 80% 0.10 30;
+    --chart-4: 85% 0.07 20;
+    --chart-5: 90% 0.04 10;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* iOS Safari safe area support */
+@supports (padding: max(0px)) {
+  .safe-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+  .safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  .safe-left {
+    padding-left: max(1rem, env(safe-area-inset-left));
+  }
+  .safe-right {
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
+
+/* Dynamic viewport height for mobile browsers */
+.min-h-dvh {
+  min-height: 100dvh;
+}
+
+/* Print styles for invoices */
+@media print {
+  /* Hide navigation and controls */
+  .print\:hidden,
+  header,
+  footer,
+  nav,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Reset page margins */
+  @page {
+    margin: 0.5cm;
+  }
+
+  /* Ensure clean printing */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Remove shadows and borders for cleaner print */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Ensure invoice content prints well */
+  .print\:block {
+    display: block !important;
+  }
+
+  /* Avoid page breaks inside important elements */
+  .print\:break-inside-avoid {
+    break-inside: avoid;
+  }
+}
