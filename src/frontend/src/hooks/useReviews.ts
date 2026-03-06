@@ -1,12 +1,12 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useActor } from './useActor';
-import type { Review } from '../backend';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { Review } from "../backend";
+import { useActor } from "./useActor";
 
 export function useGetAllReviews() {
   const { actor, isFetching } = useActor();
 
   return useQuery<Review[]>({
-    queryKey: ['reviews'],
+    queryKey: ["reviews"],
     queryFn: async () => {
       if (!actor) return [];
       const reviews = await actor.getAllReviews();
@@ -26,12 +26,15 @@ export function useSubmitReview() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ author, reviewText }: { author: string; reviewText: string }) => {
-      if (!actor) throw new Error('Actor not available');
+    mutationFn: async ({
+      author,
+      reviewText,
+    }: { author: string; reviewText: string }) => {
+      if (!actor) throw new Error("Actor not available");
       await actor.submitReview(author, reviewText);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reviews'] });
+      queryClient.invalidateQueries({ queryKey: ["reviews"] });
     },
   });
 }

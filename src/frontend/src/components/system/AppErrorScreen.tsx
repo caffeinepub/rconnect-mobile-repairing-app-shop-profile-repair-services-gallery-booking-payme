@@ -1,15 +1,21 @@
-import { AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { AlertCircle } from "lucide-react";
 
 interface AppErrorScreenProps {
   message?: string;
   details?: string;
 }
 
-export default function AppErrorScreen({ 
-  message = 'Something went wrong', 
-  details 
+export default function AppErrorScreen({
+  message = "Something went wrong",
+  details,
 }: AppErrorScreenProps) {
   const handleReload = () => {
     window.location.reload();
@@ -26,7 +32,8 @@ export default function AppErrorScreen({
           </div>
           <CardTitle className="text-2xl">{message}</CardTitle>
           <CardDescription>
-            The app encountered an unexpected error. Please try reloading the page.
+            The app encountered an unexpected error. Please try reloading the
+            page.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

@@ -1,26 +1,31 @@
-import { useState } from 'react';
-import { SHOP_INFO } from '@/constants/shopInfo';
+import { SHOP_INFO } from "@/constants/shopInfo";
+import { useState } from "react";
 
 interface LogoProps {
-  variant?: 'header' | 'hero';
+  variant?: "header" | "hero";
   className?: string;
 }
 
-export default function Logo({ variant = 'header', className = '' }: LogoProps) {
+export default function Logo({
+  variant = "header",
+  className = "",
+}: LogoProps) {
   const [imageError, setImageError] = useState(false);
 
   const sizeClasses = {
-    header: 'h-10 w-auto',
-    hero: 'w-32 h-32 md:w-40 md:h-40',
+    header: "h-10 w-auto",
+    hero: "w-32 h-32 md:w-40 md:h-40",
   };
 
   if (imageError) {
     // Fallback: Show shop name with icon
     return (
       <div className={`flex items-center justify-center ${className}`}>
-        <div className={`font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent ${
-          variant === 'hero' ? 'text-6xl md:text-7xl' : 'text-2xl'
-        }`}>
+        <div
+          className={`font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent ${
+            variant === "hero" ? "text-6xl md:text-7xl" : "text-2xl"
+          }`}
+        >
           R
         </div>
       </div>

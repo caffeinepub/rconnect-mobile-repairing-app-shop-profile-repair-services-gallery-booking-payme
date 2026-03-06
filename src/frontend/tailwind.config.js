@@ -64,13 +64,21 @@ export default {
             },
             fontFamily: {
                 sans: [
-                    'Inter',
+                    'Outfit',
                     'system-ui',
                     '-apple-system',
-                    'BlinkMacSystemFont',
-                    'Segoe UI',
-                    'Roboto',
                     'sans-serif'
+                ],
+                display: [
+                    'Bricolage Grotesque',
+                    'Outfit',
+                    'system-ui',
+                    'sans-serif'
+                ],
+                mono: [
+                    'JetBrains Mono',
+                    'Geist Mono',
+                    'monospace'
                 ]
             },
             boxShadow: {

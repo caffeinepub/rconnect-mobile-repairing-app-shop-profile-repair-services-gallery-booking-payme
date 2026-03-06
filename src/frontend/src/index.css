@@ -2,62 +2,84 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Blue/Black Tech Theme Fonts */
+@font-face {
+  font-family: "Outfit";
+  src: url("/assets/fonts/Outfit-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("/assets/fonts/BricolageGrotesque-Variable.woff2") format("woff2");
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/assets/fonts/JetBrainsMono-Variable.woff2") format("woff2");
+  font-weight: 100 800;
+  font-display: swap;
+}
+
 @layer base {
   :root {
-    /* Amber/Orange Theme - Light Mode */
-    --background: 98% 0.01 106;
-    --foreground: 20% 0.01 106;
-    --card: 100% 0 0;
-    --card-foreground: 20% 0.01 106;
-    --popover: 100% 0 0;
-    --popover-foreground: 20% 0.01 106;
-    --primary: 65% 0.19 55;
-    --primary-foreground: 98% 0.01 106;
-    --secondary: 96% 0.02 106;
-    --secondary-foreground: 20% 0.01 106;
-    --muted: 96% 0.02 106;
-    --muted-foreground: 50% 0.01 106;
-    --accent: 70% 0.15 45;
-    --accent-foreground: 20% 0.01 106;
-    --destructive: 55% 0.22 25;
-    --destructive-foreground: 98% 0.01 106;
-    --border: 90% 0.02 106;
-    --input: 90% 0.02 106;
-    --ring: 65% 0.19 55;
-    --chart-1: 65% 0.19 55;
-    --chart-2: 70% 0.15 45;
-    --chart-3: 75% 0.12 35;
-    --chart-4: 80% 0.09 25;
-    --chart-5: 85% 0.06 15;
-    --radius: 0.5rem;
+    /* RCONNECT Blue/Black Tech Theme - Dark Mode Primary */
+    --background: 12% 0.02 250;
+    --foreground: 95% 0.01 250;
+    --card: 16% 0.03 250;
+    --card-foreground: 95% 0.01 250;
+    --popover: 16% 0.03 250;
+    --popover-foreground: 95% 0.01 250;
+    --primary: 62% 0.22 250;
+    --primary-foreground: 10% 0.02 250;
+    --secondary: 22% 0.04 250;
+    --secondary-foreground: 90% 0.01 250;
+    --muted: 20% 0.03 250;
+    --muted-foreground: 65% 0.04 250;
+    --accent: 70% 0.18 195;
+    --accent-foreground: 10% 0.02 250;
+    --destructive: 58% 0.22 25;
+    --destructive-foreground: 98% 0.01 250;
+    --border: 28% 0.05 250;
+    --input: 22% 0.04 250;
+    --ring: 62% 0.22 250;
+    --chart-1: 62% 0.22 250;
+    --chart-2: 70% 0.18 195;
+    --chart-3: 55% 0.18 280;
+    --chart-4: 68% 0.15 220;
+    --chart-5: 75% 0.12 180;
+    --radius: 0.625rem;
   }
 
   .dark {
-    /* Amber/Orange Theme - Dark Mode */
-    --background: 20% 0.01 106;
-    --foreground: 98% 0.01 106;
-    --card: 25% 0.01 106;
-    --card-foreground: 98% 0.01 106;
-    --popover: 25% 0.01 106;
-    --popover-foreground: 98% 0.01 106;
-    --primary: 70% 0.17 50;
-    --primary-foreground: 20% 0.01 106;
-    --secondary: 30% 0.02 106;
-    --secondary-foreground: 98% 0.01 106;
-    --muted: 30% 0.02 106;
-    --muted-foreground: 65% 0.01 106;
-    --accent: 75% 0.13 40;
-    --accent-foreground: 20% 0.01 106;
-    --destructive: 60% 0.20 25;
-    --destructive-foreground: 98% 0.01 106;
-    --border: 35% 0.02 106;
-    --input: 35% 0.02 106;
-    --ring: 70% 0.17 50;
-    --chart-1: 70% 0.17 50;
-    --chart-2: 75% 0.13 40;
-    --chart-3: 80% 0.10 30;
-    --chart-4: 85% 0.07 20;
-    --chart-5: 90% 0.04 10;
+    /* Same dark theme for both modes - this is a dark-first design */
+    --background: 12% 0.02 250;
+    --foreground: 95% 0.01 250;
+    --card: 16% 0.03 250;
+    --card-foreground: 95% 0.01 250;
+    --popover: 16% 0.03 250;
+    --popover-foreground: 95% 0.01 250;
+    --primary: 62% 0.22 250;
+    --primary-foreground: 10% 0.02 250;
+    --secondary: 22% 0.04 250;
+    --secondary-foreground: 90% 0.01 250;
+    --muted: 20% 0.03 250;
+    --muted-foreground: 65% 0.04 250;
+    --accent: 70% 0.18 195;
+    --accent-foreground: 10% 0.02 250;
+    --destructive: 58% 0.22 25;
+    --destructive-foreground: 98% 0.01 250;
+    --border: 28% 0.05 250;
+    --input: 22% 0.04 250;
+    --ring: 62% 0.22 250;
+    --chart-1: 62% 0.22 250;
+    --chart-2: 70% 0.18 195;
+    --chart-3: 55% 0.18 280;
+    --chart-4: 68% 0.15 220;
+    --chart-5: 75% 0.12 180;
   }
 }
 
@@ -67,7 +89,37 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "Outfit", system-ui, sans-serif;
   }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Bricolage Grotesque", "Outfit", system-ui, sans-serif;
+  }
+}
+
+/* ─── Circuit-board Tech Background Pattern ─── */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.025;
+  background-image: linear-gradient(oklch(62% 0.22 250) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(62% 0.22 250) 1px, transparent 1px),
+    radial-gradient(circle, oklch(62% 0.22 250) 1.5px, transparent 1.5px);
+  background-size: 60px 60px, 60px 60px, 30px 30px;
+  background-position: 0 0, 0 0, 15px 15px;
+}
+
+/* Ensure all content appears above background pattern */
+#root {
+  position: relative;
+  z-index: 1;
 }
 
 /* iOS Safari safe area support */
@@ -91,9 +143,23 @@
   min-height: 100dvh;
 }
 
+/* ─── Custom Tech Glow Utilities ─── */
+.tech-glow {
+  box-shadow: 0 0 20px oklch(62% 0.22 250 / 0.3), 0 0 60px
+    oklch(62% 0.22 250 / 0.1);
+}
+
+.tech-glow-cyan {
+  box-shadow: 0 0 20px oklch(70% 0.18 195 / 0.3), 0 0 60px
+    oklch(70% 0.18 195 / 0.1);
+}
+
 /* Print styles for invoices */
 @media print {
-  /* Hide navigation and controls */
+  body::before {
+    display: none !important;
+  }
+
   .print\:hidden,
   header,
   footer,
@@ -102,29 +168,24 @@
     display: none !important;
   }
 
-  /* Reset page margins */
   @page {
     margin: 0.5cm;
   }
 
-  /* Ensure clean printing */
   body {
     background: white !important;
     color: black !important;
   }
 
-  /* Remove shadows and borders for cleaner print */
   * {
     box-shadow: none !important;
     text-shadow: none !important;
   }
 
-  /* Ensure invoice content prints well */
   .print\:block {
     display: block !important;
   }
 
-  /* Avoid page breaks inside important elements */
   .print\:break-inside-avoid {
     break-inside: avoid;
   }

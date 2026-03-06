@@ -1,9 +1,20 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from '@tanstack/react-router';
-import { SERVICES_CATALOG } from '@/data/servicesCatalog';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { SERVICES_CATALOG } from "@/data/servicesCatalog";
+import { useNavigate } from "@tanstack/react-router";
 
 export default function ServicesPage() {
   const navigate = useNavigate();
@@ -11,11 +22,12 @@ export default function ServicesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       {/* Header */}
-      <section className="bg-gradient-to-r from-amber-500 to-orange-600 text-white py-16">
+      <section className="bg-gradient-to-r from-blue-900 to-slate-900 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Services</h1>
           <p className="text-lg opacity-90 max-w-2xl mx-auto">
-            Professional mobile repair services for all major brands with quality parts and expert care
+            Professional mobile repair services for all major brands with
+            quality parts and expert care
           </p>
         </div>
       </section>
@@ -32,12 +44,14 @@ export default function ServicesPage() {
               >
                 <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-muted/50 transition-colors">
                   <div className="flex items-center gap-3 text-left">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 text-white flex-shrink-0">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 text-white flex-shrink-0">
                       {category.icon}
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">{category.name}</h3>
-                      <p className="text-sm text-muted-foreground">{category.services.length} services available</p>
+                      <p className="text-sm text-muted-foreground">
+                        {category.services.length} services available
+                      </p>
                     </div>
                   </div>
                 </AccordionTrigger>
@@ -49,10 +63,14 @@ export default function ServicesPage() {
                           <CardTitle className="text-base flex items-start justify-between gap-2">
                             <span>{service.name}</span>
                             {service.popular && (
-                              <Badge variant="secondary" className="text-xs">Popular</Badge>
+                              <Badge variant="secondary" className="text-xs">
+                                Popular
+                              </Badge>
                             )}
                           </CardTitle>
-                          <CardDescription className="text-sm">{service.description}</CardDescription>
+                          <CardDescription className="text-sm">
+                            {service.description}
+                          </CardDescription>
                         </CardHeader>
                         {service.estimatedTime && (
                           <CardContent className="pt-0">
@@ -70,14 +88,19 @@ export default function ServicesPage() {
           </Accordion>
 
           {/* CTA */}
-          <Card className="bg-gradient-to-r from-amber-500 to-orange-600 text-white border-0">
+          <Card className="bg-gradient-to-r from-blue-600 to-blue-900 text-white border-0">
             <CardContent className="p-8 text-center space-y-4">
-              <h2 className="text-2xl font-bold">Ready to Get Your Device Fixed?</h2>
-              <p className="opacity-90">Book your repair appointment now and get your device back in perfect condition</p>
+              <h2 className="text-2xl font-bold">
+                Ready to Get Your Device Fixed?
+              </h2>
+              <p className="opacity-90">
+                Book your repair appointment now and get your device back in
+                perfect condition
+              </p>
               <Button
                 size="lg"
                 variant="secondary"
-                onClick={() => navigate({ to: '/booking' })}
+                onClick={() => navigate({ to: "/booking" })}
                 className="mt-4"
               >
                 Book Repair Now

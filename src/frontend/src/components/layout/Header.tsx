@@ -1,26 +1,32 @@
-import { useState } from 'react';
-import { Link } from '@tanstack/react-router';
-import { Menu, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
-import LoginButton from '@/components/auth/LoginButton';
-import Logo from '@/components/branding/Logo';
+import LoginButton from "@/components/auth/LoginButton";
+import Logo from "@/components/branding/Logo";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Link } from "@tanstack/react-router";
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
-    { to: '/', label: 'Home' },
-    { to: '/services', label: 'Services' },
-    { to: '/gallery', label: 'Gallery' },
-    { to: '/booking', label: 'Book Now' },
-    { to: '/bookings', label: 'Bookings' },
-    { to: '/reviews', label: 'Reviews' },
-    { to: '/contact', label: 'Contact' },
+    { to: "/", label: "Home" },
+    { to: "/services", label: "Services" },
+    { to: "/gallery", label: "Gallery" },
+    { to: "/booking", label: "Book Now" },
+    { to: "/bookings", label: "Bookings" },
+    { to: "/income", label: "Income" },
+    { to: "/reviews", label: "Reviews" },
+    { to: "/contact", label: "Contact" },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 print:hidden">
+    <header className="sticky top-0 z-50 w-full border-b border-blue-900/40 bg-slate-950/95 backdrop-blur supports-[backdrop-filter]:bg-slate-950/80 print:hidden">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
@@ -33,8 +39,8 @@ export default function Header() {
             <Link
               key={link.to}
               to={link.to}
-              className="text-sm font-medium transition-colors hover:text-amber-600"
-              activeProps={{ className: 'text-amber-600' }}
+              className="text-sm font-medium transition-colors hover:text-blue-400"
+              activeProps={{ className: "text-blue-400" }}
             >
               {link.label}
             </Link>
@@ -55,8 +61,8 @@ export default function Header() {
                 <SheetClose asChild key={link.to}>
                   <Link
                     to={link.to}
-                    className="text-lg font-medium transition-colors hover:text-amber-600 py-2"
-                    activeProps={{ className: 'text-amber-600' }}
+                    className="text-lg font-medium transition-colors hover:text-blue-400 py-2"
+                    activeProps={{ className: "text-blue-400" }}
                   >
                     {link.label}
                   </Link>

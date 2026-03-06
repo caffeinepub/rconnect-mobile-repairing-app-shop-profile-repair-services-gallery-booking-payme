@@ -1,5 +1,6 @@
-import React, { Component, ReactNode } from 'react';
-import AppErrorScreen from './AppErrorScreen';
+import type React from "react";
+import { Component, type ReactNode } from "react";
+import AppErrorScreen from "./AppErrorScreen";
 
 interface Props {
   children: ReactNode;
@@ -21,7 +22,7 @@ class AppErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('AppErrorBoundary caught error:', error, errorInfo);
+    console.error("AppErrorBoundary caught error:", error, errorInfo);
   }
 
   render() {
@@ -29,7 +30,7 @@ class AppErrorBoundary extends Component<Props, State> {
       return (
         <AppErrorScreen
           message="Application Error"
-          details={this.state.error?.message || 'An unexpected error occurred'}
+          details={this.state.error?.message || "An unexpected error occurred"}
         />
       );
     }

@@ -1,10 +1,31 @@
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { User, Phone, Smartphone, FileText, Calendar, Clock, CreditCard, Loader2 } from 'lucide-react';
-import { formatDateTime } from '@/utils/time';
-import type { Booking, BookingStatus } from '@/backend';
+import type { Booking, BookingStatus } from "@/backend";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { formatDateTime } from "@/utils/time";
+import {
+  Calendar,
+  Clock,
+  CreditCard,
+  FileText,
+  Loader2,
+  Phone,
+  Smartphone,
+  User,
+} from "lucide-react";
 
 interface BookingDetailDialogProps {
   booking: Booking | null;
@@ -32,7 +53,9 @@ export default function BookingDetailDialog({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">Booking Details</DialogTitle>
-          <DialogDescription>Booking #{booking.id.toString()}</DialogDescription>
+          <DialogDescription>
+            Booking #{booking.id.toString()}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -47,13 +70,20 @@ export default function BookingDetailDialog({
           {/* Admin Status Update */}
           {!isPublic && onStatusUpdate && (
             <div className="space-y-2">
-              <label className="text-sm font-medium">Update Status</label>
+              <label
+                htmlFor="booking-status-select"
+                className="text-sm font-medium"
+              >
+                Update Status
+              </label>
               <Select
                 value={booking.status}
-                onValueChange={(value) => onStatusUpdate(booking.id, value as BookingStatus)}
+                onValueChange={(value) =>
+                  onStatusUpdate(booking.id, value as BookingStatus)
+                }
                 disabled={isUpdating}
               >
-                <SelectTrigger>
+                <SelectTrigger id="booking-status-select">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -106,13 +136,21 @@ export default function BookingDetailDialog({
                 <p className="font-medium">{booking.deviceModel}</p>
               </div>
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Issue Description</p>
-                <p className="text-sm leading-relaxed">{booking.issueDescription}</p>
+                <p className="text-sm text-muted-foreground">
+                  Issue Description
+                </p>
+                <p className="text-sm leading-relaxed">
+                  {booking.issueDescription}
+                </p>
               </div>
               {booking.photoNotes && (
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Additional Notes</p>
-                  <p className="text-sm leading-relaxed">{booking.photoNotes}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Additional Notes
+                  </p>
+                  <p className="text-sm leading-relaxed">
+                    {booking.photoNotes}
+                  </p>
                 </div>
               )}
             </div>
@@ -128,12 +166,18 @@ export default function BookingDetailDialog({
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-7">
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Preferred Date & Time</p>
-                <p className="font-medium">{formatDateTime(booking.preferredDateTime)}</p>
+                <p className="text-sm text-muted-foreground">
+                  Preferred Date & Time
+                </p>
+                <p className="font-medium">
+                  {formatDateTime(booking.preferredDateTime)}
+                </p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">Booking Created</p>
-                <p className="font-medium">{formatDateTime(booking.timestamp)}</p>
+                <p className="font-medium">
+                  {formatDateTime(booking.timestamp)}
+                </p>
               </div>
             </div>
           </div>

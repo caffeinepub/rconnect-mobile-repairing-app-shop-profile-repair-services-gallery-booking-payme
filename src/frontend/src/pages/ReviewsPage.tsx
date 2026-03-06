@@ -1,23 +1,29 @@
-import { useState } from 'react';
-import { Star, MessageSquare, User, Loader2 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useGetAllReviews, useSubmitReview } from '@/hooks/useReviews';
-import { formatDateTime } from '@/utils/time';
-import { toast } from 'sonner';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Textarea } from "@/components/ui/textarea";
+import { useGetAllReviews, useSubmitReview } from "@/hooks/useReviews";
+import { formatDateTime } from "@/utils/time";
+import { Loader2, MessageSquare, Star, User } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export default function ReviewsPage() {
   const { data: reviews = [], isLoading } = useGetAllReviews();
   const submitReview = useSubmitReview();
 
   const [formData, setFormData] = useState({
-    name: '',
-    rating: '5',
-    reviewText: '',
+    name: "",
+    rating: "5",
+    reviewText: "",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -26,13 +32,13 @@ export default function ReviewsPage() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Please enter your name';
+      newErrors.name = "Please enter your name";
     }
 
     if (!formData.reviewText.trim()) {
-      newErrors.reviewText = 'Please write your review';
+      newErrors.reviewText = "Please write your review";
     } else if (formData.reviewText.trim().length < 10) {
-      newErrors.reviewText = 'Review must be at least 10 characters long';
+      newErrors.reviewText = "Review must be at least 10 characters long";
     }
 
     setErrors(newErrors);
@@ -43,7 +49,7 @@ export default function ReviewsPage() {
     e.preventDefault();
 
     if (!validateForm()) {
-      toast.error('Please fix the errors in the form');
+      toast.error("Please fix the errors in the form");
       return;
     }
 
@@ -53,23 +59,26 @@ export default function ReviewsPage() {
         reviewText: formData.reviewText.trim(),
       });
 
-      toast.success('Thank you for your review!');
-      setFormData({ name: '', rating: '5', reviewText: '' });
+      toast.success("Thank you for your review!");
+      setFormData({ name: "", rating: "5", reviewText: "" });
       setErrors({});
     } catch (error) {
-      console.error('Error submitting review:', error);
-      toast.error('Failed to submit review. Please try again.');
+      console.error("Error submitting review:", error);
+      toast.error("Failed to submit review. Please try again.");
     }
   };
 
   const renderStars = (count: number) => {
     return (
       <div className="flex gap-1">
-        {Array.from({ length: 5 }).map((_, i) => (
+        {Array.from({ length: 5 }, (_, i) => (
           <Star
+            // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length star display
             key={i}
             className={`w-5 h-5 ${
-              i < count ? 'fill-amber-500 text-amber-500' : 'text-muted-foreground/30'
+              i < count
+                ? "fill-yellow-400 text-yellow-400"
+                : "text-muted-foreground/30"
             }`}
           />
         ))}
@@ -82,10 +91,10 @@ export default function ReviewsPage() {
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 text-white mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 text-white mb-4">
             <MessageSquare className="w-8 h-8" />
           </div>
-          <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
             Customer Reviews
           </h1>
           <p className="text-muted-foreground text-lg">
@@ -97,7 +106,7 @@ export default function ReviewsPage() {
         <Card className="mb-12 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Star className="w-5 h-5 text-amber-500" />
+              <Star className="w-5 h-5 text-yellow-400" />
               Share Your Experience
             </CardTitle>
             <CardDescription>
@@ -115,9 +124,9 @@ export default function ReviewsPage() {
                   value={formData.name}
                   onChange={(e) => {
                     setFormData({ ...formData, name: e.target.value });
-                    if (errors.name) setErrors({ ...errors, name: '' });
+                    if (errors.name) setErrors({ ...errors, name: "" });
                   }}
-                  className={errors.name ? 'border-destructive' : ''}
+                  className={errors.name ? "border-destructive" : ""}
                 />
                 {errors.name && (
                   <p className="text-sm text-destructive">{errors.name}</p>
@@ -129,19 +138,24 @@ export default function ReviewsPage() {
                 <Label>Rating *</Label>
                 <RadioGroup
                   value={formData.rating}
-                  onValueChange={(value) => setFormData({ ...formData, rating: value })}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, rating: value })
+                  }
                   className="flex flex-wrap gap-4"
                 >
                   {[5, 4, 3, 2, 1].map((rating) => (
                     <div key={rating} className="flex items-center space-x-2">
-                      <RadioGroupItem value={String(rating)} id={`rating-${rating}`} />
+                      <RadioGroupItem
+                        value={String(rating)}
+                        id={`rating-${rating}`}
+                      />
                       <Label
                         htmlFor={`rating-${rating}`}
                         className="flex items-center gap-2 cursor-pointer"
                       >
                         {renderStars(rating)}
                         <span className="text-sm text-muted-foreground">
-                          ({rating} {rating === 1 ? 'star' : 'stars'})
+                          ({rating} {rating === 1 ? "star" : "stars"})
                         </span>
                       </Label>
                     </div>
@@ -158,13 +172,16 @@ export default function ReviewsPage() {
                   value={formData.reviewText}
                   onChange={(e) => {
                     setFormData({ ...formData, reviewText: e.target.value });
-                    if (errors.reviewText) setErrors({ ...errors, reviewText: '' });
+                    if (errors.reviewText)
+                      setErrors({ ...errors, reviewText: "" });
                   }}
                   rows={4}
-                  className={errors.reviewText ? 'border-destructive' : ''}
+                  className={errors.reviewText ? "border-destructive" : ""}
                 />
                 {errors.reviewText && (
-                  <p className="text-sm text-destructive">{errors.reviewText}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.reviewText}
+                  </p>
                 )}
                 <p className="text-xs text-muted-foreground">
                   Minimum 10 characters
@@ -183,7 +200,7 @@ export default function ReviewsPage() {
                     Submitting...
                   </>
                 ) : (
-                  'Submit Review'
+                  "Submit Review"
                 )}
               </Button>
             </form>
@@ -193,11 +210,11 @@ export default function ReviewsPage() {
         {/* Reviews List */}
         <div className="space-y-6">
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            <MessageSquare className="w-6 h-6 text-amber-500" />
+            <MessageSquare className="w-6 h-6 text-blue-400" />
             Customer Feedback
             {reviews.length > 0 && (
               <span className="text-muted-foreground text-lg font-normal">
-                ({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})
+                ({reviews.length} {reviews.length === 1 ? "review" : "reviews"})
               </span>
             )}
           </h2>
@@ -218,12 +235,16 @@ export default function ReviewsPage() {
           ) : (
             <div className="grid gap-6">
               {reviews.map((review, index) => (
-                <Card key={index} className="shadow-md hover:shadow-lg transition-shadow">
+                <Card
+                  // biome-ignore lint/suspicious/noArrayIndexKey: reviews have no stable ID from backend
+                  key={index}
+                  className="shadow-md hover:shadow-lg transition-shadow"
+                >
                   <CardContent className="pt-6">
                     <div className="flex items-start gap-4">
                       {/* Avatar */}
                       <div className="flex-shrink-0">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-lg">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center text-white font-bold text-lg">
                           {review.author.charAt(0).toUpperCase()}
                         </div>
                       </div>

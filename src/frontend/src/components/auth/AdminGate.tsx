@@ -1,12 +1,12 @@
-import { ReactNode } from 'react';
-import { useInternetIdentity } from '@/hooks/useInternetIdentity';
-import { useIsCallerAdmin } from '@/hooks/useAuth';
-import { useActor } from '@/hooks/useActor';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Shield, Loader2 } from 'lucide-react';
-import LoginButton from './LoginButton';
-import { useNavigate } from '@tanstack/react-router';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useActor } from "@/hooks/useActor";
+import { useIsCallerAdmin } from "@/hooks/useAuth";
+import { useInternetIdentity } from "@/hooks/useInternetIdentity";
+import { useNavigate } from "@tanstack/react-router";
+import { Loader2, Shield } from "lucide-react";
+import type { ReactNode } from "react";
+import LoginButton from "./LoginButton";
 
 interface AdminGateProps {
   children: ReactNode;
@@ -14,8 +14,8 @@ interface AdminGateProps {
 
 export default function AdminGate({ children }: AdminGateProps) {
   const { identity, isInitializing } = useInternetIdentity();
-  const { actor, isFetching: actorFetching } = useActor();
-  const { data: isAdmin, isLoading: isCheckingAdmin, isFetched } = useIsCallerAdmin();
+  const { isFetching: actorFetching } = useActor();
+  const { data: isAdmin, isFetched } = useIsCallerAdmin();
   const navigate = useNavigate();
 
   const isAuthenticated = !!identity;
@@ -54,7 +54,11 @@ export default function AdminGate({ children }: AdminGateProps) {
             </div>
             <div className="space-y-3">
               <LoginButton />
-              <Button variant="outline" onClick={() => navigate({ to: '/' })} className="w-full">
+              <Button
+                variant="outline"
+                onClick={() => navigate({ to: "/" })}
+                className="w-full"
+              >
                 Back to Home
               </Button>
             </div>
@@ -78,11 +82,12 @@ export default function AdminGate({ children }: AdminGateProps) {
             <div className="space-y-2">
               <h2 className="text-2xl font-bold">Access Denied</h2>
               <p className="text-muted-foreground">
-                You don't have permission to access this area. This section is only available to shop administrators.
+                You don't have permission to access this area. This section is
+                only available to shop administrators.
               </p>
             </div>
             <div className="space-y-3">
-              <Button onClick={() => navigate({ to: '/' })} className="w-full">
+              <Button onClick={() => navigate({ to: "/" })} className="w-full">
                 Back to Home
               </Button>
               <LoginButton />

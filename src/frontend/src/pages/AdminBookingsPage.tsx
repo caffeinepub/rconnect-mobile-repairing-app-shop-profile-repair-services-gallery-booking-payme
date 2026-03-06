@@ -1,106 +1,191 @@
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, Phone, Smartphone, AlertCircle } from 'lucide-react';
-import { useGetAllBookings, useUpdateBookingStatus } from '@/hooks/useBookings';
-import { formatDateTime } from '@/utils/time';
-import type { Booking, BookingStatus } from '@/backend';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import BookingDetailDialog from '@/components/booking/BookingDetailDialog';
+import type { Booking, BookingStatus } from "@/backend";
+import BookingDetailDialog from "@/components/booking/BookingDetailDialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useGetAllBookings, useUpdateBookingStatus } from "@/hooks/useBookings";
+import { formatDateTime } from "@/utils/time";
+import { AlertCircle, Calendar, ListChecks, Search } from "lucide-react";
+import { useMemo, useState } from "react";
+
+function getStatusConfig(status: string) {
+  const configs: Record<string, { label: string; className: string }> = {
+    pending: {
+      label: "🟡 Pending",
+      className: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
+    },
+    confirmed: {
+      label: "🔵 In Progress",
+      className: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    },
+    completed: {
+      label: "🟢 Completed",
+      className: "bg-green-500/10 text-green-400 border-green-500/20",
+    },
+    cancelled: {
+      label: "❌ Cancelled",
+      className: "bg-red-500/10 text-red-400 border-red-500/20",
+    },
+  };
+  return (
+    configs[status] ?? {
+      label: status,
+      className: "bg-muted text-muted-foreground",
+    }
+  );
+}
+
+function getStatusColor(status: string) {
+  return getStatusConfig(status).className;
+}
+
+function getStatusLabel(status: string) {
+  return getStatusConfig(status).label;
+}
 
 export default function AdminBookingsPage() {
   const { data: bookings, isLoading, error } = useGetAllBookings();
   const updateStatus = useUpdateBookingStatus();
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20';
-      case 'confirmed':
-        return 'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20';
-      case 'completed':
-        return 'bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20';
-      case 'cancelled':
-        return 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20';
-      default:
-        return 'bg-gray-500/10 text-gray-700 dark:text-gray-400 border-gray-500/20';
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    return status.charAt(0).toUpperCase() + status.slice(1);
-  };
-
-  const handleStatusUpdate = async (bookingId: bigint, newStatus: BookingStatus) => {
+  const handleStatusUpdate = async (
+    bookingId: bigint,
+    newStatus: BookingStatus,
+  ) => {
     try {
       await updateStatus.mutateAsync({ bookingId, status: newStatus });
-    } catch (error) {
-      console.error('Failed to update booking status:', error);
+    } catch (err) {
+      console.error("Failed to update booking status:", err);
     }
   };
 
-  // Filter bookings based on selected status
-  const filteredBookings = bookings?.filter((booking) => {
-    if (statusFilter === 'all') return true;
-    return booking.status === statusFilter;
-  }) || [];
+  const statusCounts = useMemo(
+    () => ({
+      all: bookings?.length || 0,
+      pending: bookings?.filter((b) => b.status === "pending").length || 0,
+      confirmed: bookings?.filter((b) => b.status === "confirmed").length || 0,
+      completed: bookings?.filter((b) => b.status === "completed").length || 0,
+      cancelled: bookings?.filter((b) => b.status === "cancelled").length || 0,
+    }),
+    [bookings],
+  );
 
-  // Count bookings by status
-  const statusCounts = {
-    all: bookings?.length || 0,
-    pending: bookings?.filter(b => b.status === 'pending').length || 0,
-    confirmed: bookings?.filter(b => b.status === 'confirmed').length || 0,
-    completed: bookings?.filter(b => b.status === 'completed').length || 0,
-    cancelled: bookings?.filter(b => b.status === 'cancelled').length || 0,
-  };
+  const filteredBookings = useMemo(() => {
+    if (!bookings) return [];
+    const q = searchQuery.toLowerCase().trim();
+    return bookings.filter((b) => {
+      const matchStatus = statusFilter === "all" || b.status === statusFilter;
+      if (!matchStatus) return false;
+      if (!q) return true;
+      return (
+        b.customerName.toLowerCase().includes(q) ||
+        b.phoneNumber.toLowerCase().includes(q) ||
+        b.deviceModel.toLowerCase().includes(q) ||
+        b.id.toString().includes(q)
+      );
+    });
+  }, [bookings, statusFilter, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      <div className="container mx-auto px-4 py-12">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">All Bookings</h1>
-          <p className="text-muted-foreground">View all repair bookings</p>
+    <div className="min-h-screen">
+      {/* Header */}
+      <section className="bg-gradient-to-r from-blue-900 to-slate-900 text-white py-12">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
+              <ListChecks className="w-5 h-5 text-blue-400" />
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-display font-bold">
+                Customer List
+              </h1>
+              <p className="text-blue-200/70 text-sm mt-0.5">
+                All repair bookings — search, filter, update status
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="container mx-auto px-4 py-8 space-y-6">
+        {/* Search */}
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            data-ocid="bookings.search_input"
+            placeholder="Search by name, phone, model, or Job #..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 bg-secondary/50 border-border/50 focus:border-blue-500/50"
+          />
         </div>
 
         {/* Status Filter Tabs */}
-        <Tabs value={statusFilter} onValueChange={setStatusFilter} className="mb-6">
-          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
-            <TabsTrigger value="all">
+        <Tabs value={statusFilter} onValueChange={setStatusFilter}>
+          <TabsList className="bg-secondary/50 border border-border/50 flex-wrap h-auto gap-1 p-1">
+            <TabsTrigger
+              value="all"
+              className="text-xs data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+            >
               All ({statusCounts.all})
             </TabsTrigger>
-            <TabsTrigger value="pending">
-              Pending ({statusCounts.pending})
+            <TabsTrigger
+              value="pending"
+              className="text-xs data-[state=active]:bg-yellow-600 data-[state=active]:text-white"
+            >
+              🟡 Pending ({statusCounts.pending})
             </TabsTrigger>
-            <TabsTrigger value="confirmed">
-              Confirmed ({statusCounts.confirmed})
+            <TabsTrigger
+              value="confirmed"
+              className="text-xs data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+            >
+              🔵 In Progress ({statusCounts.confirmed})
             </TabsTrigger>
-            <TabsTrigger value="completed">
-              Completed ({statusCounts.completed})
+            <TabsTrigger
+              value="completed"
+              className="text-xs data-[state=active]:bg-green-600 data-[state=active]:text-white"
+            >
+              🟢 Completed ({statusCounts.completed})
             </TabsTrigger>
-            <TabsTrigger value="cancelled">
-              Cancelled ({statusCounts.cancelled})
+            <TabsTrigger
+              value="cancelled"
+              className="text-xs data-[state=active]:bg-red-600 data-[state=active]:text-white"
+            >
+              ❌ Cancelled ({statusCounts.cancelled})
             </TabsTrigger>
           </TabsList>
         </Tabs>
 
         {/* Loading State */}
         {isLoading && (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[...Array(6)].map((_, i) => (
-              <Card key={i}>
-                <CardHeader>
-                  <Skeleton className="h-6 w-3/4 mb-2" />
-                  <Skeleton className="h-4 w-1/2" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-4 w-full mb-2" />
-                  <Skeleton className="h-4 w-5/6" />
+          <div data-ocid="bookings.loading_state" className="space-y-3">
+            {["s1", "s2", "s3", "s4", "s5"].map((key) => (
+              <Card key={key} className="border-border/50">
+                <CardContent className="p-4 flex gap-4">
+                  <Skeleton className="h-5 w-16" />
+                  <Skeleton className="h-5 w-32" />
+                  <Skeleton className="h-5 w-28" />
+                  <Skeleton className="h-5 w-20" />
                 </CardContent>
               </Card>
             ))}
@@ -109,7 +194,7 @@ export default function AdminBookingsPage() {
 
         {/* Error State */}
         {error && (
-          <Alert variant="destructive">
+          <Alert variant="destructive" data-ocid="bookings.error_state">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
               Failed to load bookings. Please try again later.
@@ -119,82 +204,190 @@ export default function AdminBookingsPage() {
 
         {/* Empty State */}
         {!isLoading && !error && filteredBookings.length === 0 && (
-          <Card className="text-center py-12">
-            <CardContent>
-              <Calendar className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-xl font-semibold mb-2">
-                {statusFilter === 'all' ? 'No Bookings Yet' : `No ${getStatusLabel(statusFilter)} Bookings`}
+          <Card data-ocid="bookings.empty_state" className="border-border/50">
+            <CardContent className="text-center py-16">
+              <Calendar className="w-14 h-14 mx-auto mb-4 text-muted-foreground/30" />
+              <h3 className="text-lg font-semibold mb-2">
+                {searchQuery
+                  ? "No results found"
+                  : statusFilter === "all"
+                    ? "No Bookings Yet"
+                    : `No ${statusFilter} Bookings`}
               </h3>
-              <p className="text-muted-foreground">
-                {statusFilter === 'all' 
-                  ? 'There are no bookings to display at the moment.'
-                  : `There are no ${statusFilter} bookings at the moment.`
-                }
+              <p className="text-muted-foreground text-sm">
+                {searchQuery
+                  ? `No bookings match "${searchQuery}"`
+                  : "There are no bookings to display at the moment."}
               </p>
             </CardContent>
           </Card>
         )}
 
-        {/* Bookings Grid */}
+        {/* Desktop Table */}
         {!isLoading && !error && filteredBookings.length > 0 && (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredBookings.map((booking) => (
-              <Card
-                key={booking.id.toString()}
-                className="cursor-pointer hover:shadow-lg transition-shadow"
-                onClick={() => setSelectedBooking(booking)}
-              >
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg">{booking.customerName}</CardTitle>
-                      <CardDescription className="mt-1">
-                        Booking #{booking.id.toString()}
-                      </CardDescription>
-                    </div>
-                    <Badge className={getStatusColor(booking.status)}>
-                      {getStatusLabel(booking.status)}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Smartphone className="w-4 h-4 flex-shrink-0" />
-                    <span className="truncate">{booking.deviceModel}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Phone className="w-4 h-4 flex-shrink-0" />
-                    <span>{booking.phoneNumber}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="w-4 h-4 flex-shrink-0" />
-                    <span className="truncate">{formatDateTime(booking.preferredDateTime)}</span>
-                  </div>
-                  <p className="text-sm line-clamp-2 text-muted-foreground">
-                    {booking.issueDescription}
-                  </p>
-
-                  {/* Status Update Dropdown */}
-                  <div className="pt-2" onClick={(e) => e.stopPropagation()}>
-                    <Select
-                      value={booking.status}
-                      onValueChange={(value) => handleStatusUpdate(booking.id, value as BookingStatus)}
-                      disabled={updateStatus.isPending}
+          <div>
+            {/* Desktop */}
+            <Card
+              data-ocid="bookings.table"
+              className="hidden md:block border-border/50 overflow-hidden"
+            >
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border/50 bg-secondary/30">
+                    <TableHead className="text-muted-foreground font-semibold">
+                      Job Card #
+                    </TableHead>
+                    <TableHead className="text-muted-foreground font-semibold">
+                      Customer
+                    </TableHead>
+                    <TableHead className="text-muted-foreground font-semibold">
+                      Mobile Model
+                    </TableHead>
+                    <TableHead className="text-muted-foreground font-semibold">
+                      Problem
+                    </TableHead>
+                    <TableHead className="text-muted-foreground font-semibold">
+                      Date
+                    </TableHead>
+                    <TableHead className="text-muted-foreground font-semibold">
+                      Status
+                    </TableHead>
+                    <TableHead className="text-muted-foreground font-semibold">
+                      Update
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredBookings.map((booking, idx) => (
+                    <TableRow
+                      key={booking.id.toString()}
+                      data-ocid={`bookings.row.${idx + 1}`}
+                      className="border-border/30 hover:bg-muted/20 cursor-pointer"
+                      onClick={() => setSelectedBooking(booking)}
                     >
-                      <SelectTrigger className="w-full">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="confirmed">Confirmed</SelectItem>
-                        <SelectItem value="completed">Completed</SelectItem>
-                        <SelectItem value="cancelled">Cancelled</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                      <TableCell>
+                        <span className="font-mono text-xs font-bold text-blue-400">
+                          #{booking.id.toString()}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <p className="font-semibold text-sm">
+                            {booking.customerName}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {booking.phoneNumber}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {booking.deviceModel}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground max-w-[160px] truncate">
+                        {booking.issueDescription}
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {formatDateTime(booking.preferredDateTime)}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          className={getStatusConfig(booking.status).className}
+                        >
+                          {getStatusConfig(booking.status).label}
+                        </Badge>
+                      </TableCell>
+                      <TableCell onClick={(e) => e.stopPropagation()}>
+                        <Select
+                          value={booking.status}
+                          onValueChange={(value) =>
+                            handleStatusUpdate(
+                              booking.id,
+                              value as BookingStatus,
+                            )
+                          }
+                          disabled={updateStatus.isPending}
+                        >
+                          <SelectTrigger className="w-[120px] h-8 text-xs border-border/50">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">🟡 Pending</SelectItem>
+                            <SelectItem value="confirmed">
+                              🔵 In Progress
+                            </SelectItem>
+                            <SelectItem value="completed">
+                              🟢 Completed
+                            </SelectItem>
+                            <SelectItem value="cancelled">
+                              ❌ Cancelled
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Card>
+
+            {/* Mobile Cards */}
+            <div className="md:hidden space-y-3">
+              {filteredBookings.map((booking, idx) => (
+                <Card
+                  key={booking.id.toString()}
+                  data-ocid={`bookings.row.${idx + 1}`}
+                  className="border-border/50 cursor-pointer hover:border-blue-500/40 transition-colors"
+                  onClick={() => setSelectedBooking(booking)}
+                >
+                  <CardContent className="p-4 space-y-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="font-semibold">{booking.customerName}</p>
+                        <p className="text-xs font-mono text-blue-400">
+                          Job #{booking.id.toString()}
+                        </p>
+                      </div>
+                      <Badge
+                        className={getStatusConfig(booking.status).className}
+                      >
+                        {getStatusConfig(booking.status).label}
+                      </Badge>
+                    </div>
+                    <div className="text-sm text-muted-foreground space-y-1">
+                      <p>📱 {booking.deviceModel}</p>
+                      <p>📞 {booking.phoneNumber}</p>
+                      <p className="truncate">⚠️ {booking.issueDescription}</p>
+                    </div>
+                    {/* biome-ignore lint/a11y/useKeyWithClickEvents: stopPropagation for nested select */}
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <Select
+                        value={booking.status}
+                        onValueChange={(value) =>
+                          handleStatusUpdate(booking.id, value as BookingStatus)
+                        }
+                        disabled={updateStatus.isPending}
+                      >
+                        <SelectTrigger className="w-full h-8 text-xs border-border/50">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">🟡 Pending</SelectItem>
+                          <SelectItem value="confirmed">
+                            🔵 In Progress
+                          </SelectItem>
+                          <SelectItem value="completed">
+                            🟢 Completed
+                          </SelectItem>
+                          <SelectItem value="cancelled">
+                            ❌ Cancelled
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
         )}
 
@@ -207,7 +400,7 @@ export default function AdminBookingsPage() {
           onStatusUpdate={handleStatusUpdate}
           isUpdating={updateStatus.isPending}
         />
-      </div>
+      </section>
     </div>
   );
 }
